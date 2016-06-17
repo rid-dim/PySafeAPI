@@ -43,7 +43,7 @@ class Safe:
         # Requires use to " instead of '
         # TODO handle quotes in parameters
         payload = str(payload).replace('\'', '"')
-        r = requests.post('http://localhost:8100/auth',
+        r = requests.post(self.get_url('auth'),
             data=payload,
             headers=headers)
         if r.status_code == 200:
