@@ -43,8 +43,15 @@ class Safe:
         r = requests.post('http://localhost:8100/auth',
             data=payload,
             headers=headers)
-        print r.text
+        if r.status_code == 200:
+            json = r.json()
+            self.encryptedKey = json['encryptedKey']
+            self.token = json['token']
+            self.permissions = json['permissions']
+            self.publicKey = ['publicKey']
+            return True
+        else:
+            return False
 
 if __name__=='__main__':
     s = Safe('Test', '0.0.1', 'hintofbasil', 'com.github.hintofbasil')
-    s.authenticate()
