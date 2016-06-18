@@ -17,12 +17,14 @@ class Safe:
             vendor,
             id,
             addr='http://localhost',
-            port=8100):
+            port=8100,
+            isShared=False):
         self.name = name
         self.version = version
         self.vendor = vendor
         self.id = id
         self.url = "%s:%d/" % (addr, port)
+        self.isShared = isShared
 
     def _get_url(self, location):
         return self.url + location
@@ -116,7 +118,10 @@ class Safe:
         else:
             return False, r.text
 
-    def mkdir(self, dirPath, isPrivate, isVersioned, isPathShared, metadata=None):
+    def mkdir(self, dirPath, isPrivate, isVersioned, isPathShared=None, metadata=None):
+        if isPathShared is None:
+            isPathShared = self.isShared
+
         headers = {
                 'authorization': 'Bearer %s' % self.token,
                 'Content-Type': 'text/plain'
@@ -134,7 +139,11 @@ class Safe:
         else:
             return False, self._decrypt_response(r.text)
 
-    def get_dir(self, dirPath, isPathShared=False):
+    def get_dir(self, dirPath, isPathShared=None):
+        if isPathShared is None:
+            isPathShared = self.isShared
+
+        isPathShared = self.isShared or isPathShared
         headers = {
                 'Authorization': 'Bearer %s' % self.token
         }
@@ -152,8 +161,11 @@ class Safe:
         else:
             return False, self._decrypt_response(r.text)
 
-    def post_file(self, filePath, isPrivate, isVersioned, isPathShared,
-            metadata=None):
+    def post_file(self, filePath, isPrivate, isVersioned,
+            isPathShared=None, metadata=None):
+        if isPathShared is None:
+            isPathShared = self.isShared
+
         headers = {
             'Authorization': 'Bearer %s' % self.token
         }
@@ -170,8 +182,11 @@ class Safe:
         else:
             return False, self._decrypt_response(r.text)
 
-    def get_file(self, dirPath, isPathShared=False,
+    def get_file(self, dirPath, isPathShared=None,
             offset=None, length=None):
+        if isPathShared is None:
+            isPathShared = self.isShared
+
         headers = {
                 'Authorization': 'Bearer %s' % self.token
         }
@@ -195,7 +210,10 @@ class Safe:
         else:
             return False, self._decrypt_response(r.text, is_json=False)
 
-    def put_file(self, data, filePath, isPathShared=False, offset=None):
+    def put_file(self, data, filePath, isPathShared=None, offset=None):
+        if isPathShared is None:
+            isPathShared = self.isShared
+
         headers = {
             'Authorization': 'Bearer %s' % self.token
         }
@@ -213,7 +231,11 @@ class Safe:
         else:
             return False, self._decrypt_response(r.text)
 
-    def post_dns(self, longName, serviceName, serviceHomeDirPath, isPathShared=False):
+    def post_dns(self, longName, serviceName, serviceHomeDirPath,
+            isPathShared=None):
+        if isPathShared is None:
+            isPathShared = self.isShared
+
         headers = {
             'Authorization': 'Bearer %s' % self.token
         }
