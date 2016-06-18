@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
-from nacl.public import PrivateKey, Box
+from nacl.public import PrivateKey, Box, PublicKey
+from nacl.bindings.crypto_box import (crypto_box_afternm,
+        crypto_box_open_afternm)
 import nacl.utils
 import requests
 import base64
+import json
 
 class Safe:
 
@@ -20,8 +23,27 @@ class Safe:
         self.id = id
         self.url = "%s:%d/" % (addr, port)
 
-    def get_url(self, location):
+    def _get_url(self, location):
         return self.url + location
+
+    def _post(self, path, headers, payload):
+        url = self._get_url(path)
+        payload = json.dumps(payload)
+        r = requests.post(url,
+            data=payload,
+            headers=headers)
+        return r
+
+    def _post_encrypted(self, path, headers, payload):
+        url = self._get_url(path)
+        payload = json.dumps(payload)
+        encryptedData = crypto_box_afternm(payload, self.symmetricNonce,
+                self.symmetricKey)
+        payload = base64.b64encode(encryptedData)
+        r = requests.post(url,
+            data=payload,
+            headers=headers)
+        return r
 
     def authenticate(self, permissions=[]): #TODO check is needs to = None
         keys = PrivateKey.generate()
@@ -40,18 +62,20 @@ class Safe:
         headers = {
             'Content-Type': 'application/json'
         }
-        # Requires use to " instead of '
-        # TODO handle quotes in parameters
-        payload = str(payload).replace('\'', '"')
-        r = requests.post(self.get_url('auth'),
-            data=payload,
-            headers=headers)
+        r = self._post('auth', headers, payload)
         if r.status_code == 200:
-            json = r.json()
-            self.encryptedKey = json['encryptedKey']
-            self.token = json['token']
-            self.permissions = json['permissions']
-            self.publicKey = ['publicKey']
+            responseJson = r.json()
+            cipherText = base64.b64decode(responseJson['encryptedKey'])
+            self.token = responseJson['token']
+            self.permissions = responseJson['permissions']
+            self.publicKey = base64.b64decode(responseJson['publicKey'])
+
+            box = Box(keys, PublicKey(self.publicKey))
+            data = box.decrypt(cipherText, nonce=nonce)
+
+            self.symmetricKey = data[0:PrivateKey.SIZE]
+            self.symmetricNonce = data[PrivateKey.SIZE:]
+
             return True
         else:
             return False
@@ -66,7 +90,7 @@ class Safe:
                 'Authorization': 'Bearer %s' % self.token
         }
         r = response = requests.get(
-                self.get_url('auth'),
+                self._get_url('auth'),
                 headers=headers
         )
         if r.status_code == 200:
@@ -74,6 +98,28 @@ class Safe:
         else:
             return False
 
+    def mkdir(self, dirPath, isPrivate, isVersioned, isPathShared, metadata=None):
+        headers = {
+                'authorization': 'Bearer %s' % self.token,
+                'Content-Type': 'text/plain'
+        }
+        payload = {
+                'dirPath': dirPath,
+                'isPrivate': isPrivate,
+                'metadata': metadata,
+                'isVersioned': isVersioned,
+                'isPathShared': isPathShared
+        }
+        r = self._post_encrypted('nfs/directory', headers, payload)
+        if r.status_code == 200:
+            return True, 'Ok'
+        else:
+            message = crypto_box_open_afternm(base64.b64decode(r.text),
+                    self.symmetricNonce, self.symmetricKey)
+            return False, json.loads(message)
 
 if __name__=='__main__':
     s = Safe('Test', '0.0.1', 'hintofbasil', 'com.github.hintofbasil')
+    if s.authenticate():
+        print s.is_authenticated()
+        print s.mkdir('/photosV5', True, False, False)
