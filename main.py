@@ -112,9 +112,9 @@ class Safe:
                 headers=headers
         )
         if r.status_code == 200:
-            return True
+            return True, r.text
         else:
-            return False
+            return False, r.text
 
     def mkdir(self, dirPath, isPrivate, isVersioned, isPathShared, metadata=None):
         headers = {
@@ -130,7 +130,7 @@ class Safe:
         }
         r = self._post_encrypted('nfs/directory', headers, payload)
         if r.status_code == 200:
-            return True, 'Ok'
+            return True, r.text
         else:
             return False, self._decrypt_response(r.text)
 
@@ -147,10 +147,10 @@ class Safe:
                 headers=headers
         )
         # TODO find other status codes and generate responses
-        if r.status_code == 200 or r.status_code == 400:
-            return self._decrypt_response(r.text)
+        if r.status_code == 200:
+            return True, self._decrypt_response(r.text)
         else:
-            return None
+            return False, self._decrypt_response(r.text)
 
     def post_file(self, filePath, isPrivate, isVersioned, isPathShared,
             metadata=None):
@@ -166,7 +166,7 @@ class Safe:
         }
         r = self._post_encrypted('nfs/file', headers, payload)
         if r.status_code == 200:
-            return True
+            return True, r.text
         else:
             return False, self._decrypt_response(r.text)
 
@@ -192,9 +192,9 @@ class Safe:
         )
         # TODO find other status codes and generate responses
         if r.status_code == 200 or r.status_code == 400:
-            return self._decrypt_response(r.text, is_json=False)
+            return True, self._decrypt_response(r.text, is_json=False)
         else:
-            return None
+            return False, self._decrypt_response(r.text, is_json=False)
 
     def put_file(self, data, filePath, isPathShared=False, offset=None):
         headers = {
@@ -210,9 +210,9 @@ class Safe:
             url = url + "?" + urllib.urlencode(args)
         r = self._put_encrypted(url, headers, data)
         if r.status_code == 200:
-            return True
+            return True, r.text
         else:
-            return False, self._decrypt_response(r.text)
+            return False, r.text
 
     def post_dns(self, longName, serviceName, serviceHomeDirPath, isPathShared=False):
         headers = {
@@ -225,17 +225,15 @@ class Safe:
             'isPathShared': isPathShared
         }
         r = self._post_encrypted('dns', headers, payload)
-        print r.status_code
-        print r.text
         if r.status_code == 200:
-            return True
+            return True, r.text
         else:
             return False, self._decrypt_response(r.text)
 
 if __name__=='__main__':
     s = Safe('Test', '0.0.1', 'hintofbasil', 'com.github.hintofbasil')
     if s.authenticate(permissions=['SAFE_DRIVE_ACCESS']):
-        folder = '/www6'
+        folder = '/www15'
         filename = '/index.html'
         data = '<html><body><h1>Test successful</h1></body></html>'
         print "1", s.is_authenticated()
@@ -245,4 +243,4 @@ if __name__=='__main__':
         print "5", s.put_file('This is test data', folder + filename,
                 isPathShared=True)
         print "6", s.get_file(folder + filename, True)
-        print "7", s.post_dns('hintofbasil6', 'www', folder, isPathShared=True)
+        print "7", s.post_dns('hintofbasil14', 'www', folder, isPathShared=True)
