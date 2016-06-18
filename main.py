@@ -7,6 +7,7 @@ import nacl.utils
 import requests
 import base64
 import json
+import urllib
 
 class Safe:
 
@@ -44,6 +45,10 @@ class Safe:
             data=payload,
             headers=headers)
         return r
+
+    def _decrypt_response(self, message):
+        return json.loads(crypto_box_open_afternm(base64.b64decode(message),
+                self.symmetricNonce, self.symmetricKey))
 
     def authenticate(self, permissions=[]): #TODO check is needs to = None
         keys = PrivateKey.generate()
@@ -114,12 +119,29 @@ class Safe:
         if r.status_code == 200:
             return True, 'Ok'
         else:
-            message = crypto_box_open_afternm(base64.b64decode(r.text),
-                    self.symmetricNonce, self.symmetricKey)
-            return False, json.loads(message)
+            return False, self._decrypt_response(r.text)
+
+    def getdir(self, dirPath, isPathShared=False):
+        headers = {
+                'Authorization': 'Bearer %s' % self.token
+        }
+        dirPath = urllib.quote_plus(dirPath)
+        # requires lower case
+        isPathShared = 'true' if isPathShared else 'false'
+        url = self._get_url('nfs/directory/%s/%s' % (dirPath, isPathShared))
+        r = response = requests.get(
+                url,
+                headers=headers
+        )
+        # TODO find other status codes and generate responses
+        if r.status_code == 200 or r.status_code == 400:
+            return self._decrypt_response(r.text)
+        else:
+            return None
 
 if __name__=='__main__':
     s = Safe('Test', '0.0.1', 'hintofbasil', 'com.github.hintofbasil')
     if s.authenticate():
         print s.is_authenticated()
         print s.mkdir('/photosV5', True, False, False)
+        print s.getdir('/photosV5')
