@@ -139,9 +139,28 @@ class Safe:
         else:
             return None
 
+    def put_file(self, filePath, isPrivate, isVersioned, isPathShared,
+            metadata=None):
+        headers = {
+            'Authorization': 'Bearer %s' % self.token
+        }
+        payload = {
+            'filePath': filePath,
+            'isPRivate': isPrivate,
+            'metadata': metadata,
+            'isVersioned': isVersioned,
+            'isPathShared': isPathShared
+        }
+        r = self._post_encrypted('nfs/file', headers, payload)
+        if r.status_code == 200:
+            return True
+        else:
+            return False, self._decrypt_response(r.text)
+
 if __name__=='__main__':
     s = Safe('Test', '0.0.1', 'hintofbasil', 'com.github.hintofbasil')
     if s.authenticate():
         print s.is_authenticated()
         print s.mkdir('/photosV5', True, False, False)
         print s.getdir('/photosV5')
+        print s.put_file('/photos/test3.txt', True, False, False)
