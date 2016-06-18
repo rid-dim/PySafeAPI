@@ -190,8 +190,7 @@ class Safe:
                 url,
                 headers=headers
         )
-        # TODO find other status codes and generate responses
-        if r.status_code == 200 or r.status_code == 400:
+        if r.status_code == 200:
             return True, self._decrypt_response(r.text, is_json=False)
         else:
             return False, self._decrypt_response(r.text, is_json=False)
@@ -212,7 +211,7 @@ class Safe:
         if r.status_code == 200:
             return True, r.text
         else:
-            return False, r.text
+            return False, self._decrypt_response(r.text)
 
     def post_dns(self, longName, serviceName, serviceHomeDirPath, isPathShared=False):
         headers = {
@@ -229,18 +228,3 @@ class Safe:
             return True, r.text
         else:
             return False, self._decrypt_response(r.text)
-
-if __name__=='__main__':
-    s = Safe('Test', '0.0.1', 'hintofbasil', 'com.github.hintofbasil')
-    if s.authenticate(permissions=['SAFE_DRIVE_ACCESS']):
-        folder = '/www15'
-        filename = '/index.html'
-        data = '<html><body><h1>Test successful</h1></body></html>'
-        print "1", s.is_authenticated()
-        print "2", s.mkdir(folder, False, False, True)
-        print "3", s.get_dir(folder, isPathShared=True)
-        print "4", s.post_file(folder + filename, True, False, True)
-        print "5", s.put_file('This is test data', folder + filename,
-                isPathShared=True)
-        print "6", s.get_file(folder + filename, True)
-        print "7", s.post_dns('hintofbasil14', 'www', folder, isPathShared=True)
