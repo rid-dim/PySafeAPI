@@ -262,3 +262,19 @@ class Safe:
             return True
         else:
             raise SafeException(self._decrypt_response(r.text))
+
+    def get_dns(self, longName):
+        headers = {
+            'Authorization': 'Bearer %s' % self.token
+        }
+        longName = urllib.quote_plus(longName)
+        url = self._get_url('dns/%s' % longName)
+        r = requests.get(url,
+            headers = headers
+        )
+        if r.status_code == 200:
+            return self._decrypt_response(r.text)
+        elif r.status_code == 401:
+            raise SafeException("Unauthorised")
+        else:
+            return None
