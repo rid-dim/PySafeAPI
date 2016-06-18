@@ -46,9 +46,12 @@ class Safe:
             headers=headers)
         return r
 
-    def _decrypt_response(self, message):
-        return json.loads(crypto_box_open_afternm(base64.b64decode(message),
-                self.symmetricNonce, self.symmetricKey))
+    def _decrypt_response(self, message, is_json=True):
+        message = crypto_box_open_afternm(base64.b64decode(message),
+                self.symmetricNonce, self.symmetricKey)
+        if is_json:
+            message = json.loads(message)
+        return message
 
     def authenticate(self, permissions=[]): #TODO check is needs to = None
         keys = PrivateKey.generate()
@@ -121,7 +124,7 @@ class Safe:
         else:
             return False, self._decrypt_response(r.text)
 
-    def getdir(self, dirPath, isPathShared=False):
+    def get_dir(self, dirPath, isPathShared=False):
         headers = {
                 'Authorization': 'Bearer %s' % self.token
         }
@@ -157,10 +160,37 @@ class Safe:
         else:
             return False, self._decrypt_response(r.text)
 
+    def get_file(self, dirPath, isPathShared=False,
+            offset=None, length=None):
+        headers = {
+                'Authorization': 'Bearer %s' % self.token
+        }
+        args = {}
+        if offset is not None:
+            args['offset'] = offset
+        if length is not None:
+            args['length'] = length
+        dirPath = urllib.quote_plus(dirPath)
+        # requires lower case
+        isPathShared = 'true' if isPathShared else 'false'
+        url = self._get_url('nfs/file/%s/%s' % (dirPath, isPathShared))
+        if args:
+            url = url + "?" + urllib.urlencode(args)
+        r = response = requests.get(
+                url,
+                headers=headers
+        )
+        # TODO find other status codes and generate responses
+        if r.status_code == 200 or r.status_code == 400:
+            return self._decrypt_response(r.text, is_json=False)
+        else:
+            return None
+
 if __name__=='__main__':
     s = Safe('Test', '0.0.1', 'hintofbasil', 'com.github.hintofbasil')
     if s.authenticate():
         print s.is_authenticated()
         print s.mkdir('/photosV5', True, False, False)
-        print s.getdir('/photosV5')
+        print s.get_dir('/photosV5')
         print s.put_file('/photos/test3.txt', True, False, False)
+        print s.get_file('/photos/test3.txt', False)
