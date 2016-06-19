@@ -33,7 +33,23 @@ class Safe:
     def _get_url(self, location):
         return self.url + location
 
-    def _post(self, path, headers, payload):
+    def _get(self, path):
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        if self.token:
+            headers['Authorization'] = 'Bearer %s' % self.token
+        url = self._get_url(path)
+        r = requests.get(url,
+            headers=headers)
+        return r
+
+    def _post(self, path, payload):
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        if self.token:
+            headers['Authorization'] = 'Bearer %s' % self.token
         url = self._get_url(path)
         payload = json.dumps(payload)
         r = requests.post(url,
@@ -41,9 +57,13 @@ class Safe:
             headers=headers)
         return r
 
-    def _post_encrypted(self, path, headers, payload):
+    def _post_encrypted(self, path, payload):
         if not self.symmetricNonce or not self.symmetricKey:
             raise SafeException("Unauthorised")
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization':'Bearer %s' % self.token
+        }
         url = self._get_url(path)
         payload = json.dumps(payload)
         encryptedData = crypto_box_afternm(payload, self.symmetricNonce,
@@ -54,9 +74,13 @@ class Safe:
             headers=headers)
         return r
 
-    def _put_encrypted(self, path, headers, payload):
+    def _put_encrypted(self, path, payload):
         if not self.symmetricNonce or not self.symmetricKey:
             raise SafeException("Unauthorised")
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization':'Bearer %s' % self.token
+        }
         url = self._get_url(path)
         encryptedData = crypto_box_afternm(payload, self.symmetricNonce,
                 self.symmetricKey)
@@ -87,10 +111,7 @@ class Safe:
             'nonce': base64.b64encode(nonce),
             'permissions': permissions
         }
-        headers = {
-            'Content-Type': 'application/json'
-        }
-        r = self._post('auth', headers, payload)
+        r = self._post('auth', payload)
         if r.status_code == 200:
             responseJson = r.json()
             cipherText = base64.b64decode(responseJson['encryptedKey'])
@@ -113,13 +134,7 @@ class Safe:
         except AttributeError:
             return False
 
-        headers = {
-                'Authorization': 'Bearer %s' % self.token
-        }
-        r = response = requests.get(
-                self._get_url('auth'),
-                headers=headers
-        )
+        r = self._get('auth')
         if r.status_code == 200:
             return True
         else:
@@ -129,10 +144,6 @@ class Safe:
         if isPathShared is None:
             isPathShared = self.isShared
 
-        headers = {
-                'authorization': 'Bearer %s' % self.token,
-                'Content-Type': 'text/plain'
-        }
         payload = {
                 'dirPath': dirPath,
                 'isPrivate': isPrivate,
@@ -140,7 +151,7 @@ class Safe:
                 'isVersioned': isVersioned,
                 'isPathShared': isPathShared
         }
-        r = self._post_encrypted('nfs/directory', headers, payload)
+        r = self._post_encrypted('nfs/directory', payload)
         if r.status_code == 200:
             return True
         else:
@@ -151,17 +162,11 @@ class Safe:
             isPathShared = self.isShared
 
         isPathShared = self.isShared or isPathShared
-        headers = {
-                'Authorization': 'Bearer %s' % self.token
-        }
         dirPath = urllib.quote_plus(dirPath)
         # requires lower case
         isPathShared = 'true' if isPathShared else 'false'
-        url = self._get_url('nfs/directory/%s/%s' % (dirPath, isPathShared))
-        r = response = requests.get(
-                url,
-                headers=headers
-        )
+        path = 'nfs/directory/%s/%s' % (dirPath, isPathShared)
+        r = self._get(path)
         if r.status_code == 200:
             return self._decrypt_response(r.text)
         elif r.status_code == 401:
@@ -174,9 +179,6 @@ class Safe:
         if isPathShared is None:
             isPathShared = self.isShared
 
-        headers = {
-            'Authorization': 'Bearer %s' % self.token
-        }
         payload = {
             'filePath': filePath,
             'isPRivate': isPrivate,
@@ -184,7 +186,7 @@ class Safe:
             'isVersioned': isVersioned,
             'isPathShared': isPathShared
         }
-        r = self._post_encrypted('nfs/file', headers, payload)
+        r = self._post_encrypted('nfs/file', payload)
         if r.status_code == 200:
             return True
         else:
@@ -195,9 +197,6 @@ class Safe:
         if isPathShared is None:
             isPathShared = self.isShared
 
-        headers = {
-                'Authorization': 'Bearer %s' % self.token
-        }
         args = {}
         if offset is not None:
             args['offset'] = offset
@@ -206,13 +205,10 @@ class Safe:
         dirPath = urllib.quote_plus(dirPath)
         # requires lower case
         isPathShared = 'true' if isPathShared else 'false'
-        url = self._get_url('nfs/file/%s/%s' % (dirPath, isPathShared))
+        path = 'nfs/file/%s/%s' % (dirPath, isPathShared)
         if args:
-            url = url + "?" + urllib.urlencode(args)
-        r = response = requests.get(
-                url,
-                headers=headers
-        )
+            path = path + "?" + urllib.urlencode(args)
+        r = self._get(path)
         if r.status_code == 200:
             return self._decrypt_response(r.text, is_json=False)
         elif r.status_code == 401:
@@ -224,18 +220,15 @@ class Safe:
         if isPathShared is None:
             isPathShared = self.isShared
 
-        headers = {
-            'Authorization': 'Bearer %s' % self.token
-        }
         args = {}
         if offset is not None:
             args['offset'] = offset
         filePath = urllib.quote_plus(filePath)
         isPathShared = 'true' if isPathShared else 'false'
-        url = 'nfs/file/%s/%s' % (filePath, isPathShared)
+        path = 'nfs/file/%s/%s' % (filePath, isPathShared)
         if args:
-            url = url + "?" + urllib.urlencode(args)
-        r = self._put_encrypted(url, headers, data)
+            path = path + "?" + urllib.urlencode(args)
+        r = self._put_encrypted(path, data)
         if r.status_code == 200:
             return True
         else:
@@ -246,30 +239,22 @@ class Safe:
         if isPathShared is None:
             isPathShared = self.isShared
 
-        headers = {
-            'Authorization': 'Bearer %s' % self.token
-        }
         payload = {
             'longName': longName,
             'serviceName': serviceName,
             'serviceHomeDirPath': serviceHomeDirPath,
             'isPathShared': isPathShared
         }
-        r = self._post_encrypted('dns', headers, payload)
+        r = self._post_encrypted('dns', payload)
         if r.status_code == 200:
             return True
         else:
             raise SafeException(self._decrypt_response(r.text))
 
     def get_dns(self, longName):
-        headers = {
-            'Authorization': 'Bearer %s' % self.token
-        }
         longName = urllib.quote_plus(longName)
-        url = self._get_url('dns/%s' % longName)
-        r = requests.get(url,
-            headers = headers
-        )
+        path = 'dns/%s' % longName
+        r = self._get(path)
         if r.status_code == 200:
             return self._decrypt_response(r.text)
         elif r.status_code == 401:
