@@ -6,8 +6,11 @@ A python wrapper around the [Safe Launcher API](https://maidsafe.readme.io/docs/
 Installation
 ------------
 
-PySafeAPI is not currently on PyPi due to it's infancy.  Installation currently requires copying safeAPI.py to your project's location.
-`mv safeAPI.py YOUR_LOCATION`
+PySafeAPI is installable from PyPi using the following command:
+
+`pip install PySafeAPI`
+
+This will not include the examples which are downloadable by cloning this repository.
 
 Progress
 --------
