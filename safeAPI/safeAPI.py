@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from nacl.public import PrivateKey, Box, PublicKey
 from nacl.bindings.crypto_box import (crypto_box_afternm,
         crypto_box_open_afternm)
