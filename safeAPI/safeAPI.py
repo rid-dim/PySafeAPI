@@ -74,7 +74,7 @@ class Safe:
             headers=headers)
         return r
 
-    def _put_encrypted(self, path, payload):
+    def _put_encrypted(self, path, payload, isJson=False):
         if not self.symmetricNonce or not self.symmetricKey:
             raise SafeException("Unauthorised")
         headers = {
@@ -82,6 +82,8 @@ class Safe:
             'Authorization':'Bearer %s' % self.token
         }
         url = self._get_url(path)
+        if isJson:
+            payload = json.dumps(payload)
         encryptedData = crypto_box_afternm(payload, self.symmetricNonce,
                 self.symmetricKey)
         payload = base64.b64encode(encryptedData)
@@ -261,3 +263,20 @@ class Safe:
             raise SafeException("Unauthorised")
         else:
             return None
+
+    def put_dns(self, longName, serviceName, serviceHomeDirPath,
+            isPathShared=None):
+        if isPathShared is None:
+            isPathShared = self.isShared
+
+        payload = {
+            'longName': longName,
+            'serviceName': serviceName,
+            'serviceHomeDirPath': serviceHomeDirPath,
+            'isPathShared': isPathShared
+        }
+        r = self._put_encrypted('dns', payload, isJson=True)
+        if r.status_code == 200:
+            return True
+        else:
+            raise SafeException(self._decrypt_response(r.text))
