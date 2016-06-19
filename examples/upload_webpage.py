@@ -2,10 +2,18 @@
 
 from safeAPI import Safe 
 
+import sys
+
 folder = '/www'
 filename = '/index.html'
 fileData = '<html><body><h1>Test successful</h1></body></html>'
-dns_name = 'DNSNAME'
+dnsName = 'DNSNAME'
+
+try:
+    dnsName = sys.argv[1]
+    fileData = sys.argv[2]
+except IndexError:
+    pass # Allow easy overriding of constants for testing
 
 if __name__=='__main__':
     # Create Safe opject
@@ -25,4 +33,4 @@ if __name__=='__main__':
         s.put_file(fileData, folder + filename)
         # TODO get_dns
         # Create DNS entry
-        s.post_dns(dns_name, 'www', folder)
+        s.post_dns(dnsName, 'www', folder)
