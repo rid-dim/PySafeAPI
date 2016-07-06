@@ -25,10 +25,12 @@ if __name__=='__main__':
         if not s.get_dir(folder):
             # If it doesn't exist create folder
             s.mkdir(folder, False, False)
-        # Check if file exists
+        exit()
+        #Check if file exists
         if not s.get_file(folder + filename, True):
             # If file doesn't exist create file
             s.post_file(folder + filename, True, False, True)
+        exit()
         # Put data in file - overwrites current content
         s.put_file(fileData, folder + filename)
         # TODO get_dns

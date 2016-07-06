@@ -27,8 +27,6 @@ class Safe:
         self.url = "%s:%d/" % (addr, port)
         self.isShared = isShared
         self.token = ""
-        self.symmetricNonce = ""
-        self.symmetricKey = ""
 
     def _get_url(self, location):
         return self.url + location
@@ -116,16 +114,8 @@ class Safe:
         r = self._post('auth', payload)
         if r.status_code == 200:
             responseJson = r.json()
-            cipherText = base64.b64decode(responseJson['encryptedKey'])
             self.token = responseJson['token']
             self.permissions = responseJson['permissions']
-            self.publicKey = base64.b64decode(responseJson['publicKey'])
-
-            box = Box(keys, PublicKey(self.publicKey))
-            data = box.decrypt(cipherText, nonce=nonce)
-
-            self.symmetricKey = data[0:PrivateKey.SIZE]
-            self.symmetricNonce = data[PrivateKey.SIZE:]
             return True
         else:
             return False
