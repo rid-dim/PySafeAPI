@@ -6,6 +6,7 @@ import requests
 import base64
 import json
 import urllib
+from os.path import expanduser
 
 class SafeException(Exception):
     pass
@@ -98,8 +99,8 @@ class Safe:
         return message
 
     def authenticate(self, permissions=[]): #TODO check is needs to = None
-        keys = PrivateKey.generate()
-        nonce = nacl.utils.random(Box.NONCE_SIZE)
+        if self._get_saved_token():
+            return True
         payload = {
             'app': {
                 'name': self.name,
@@ -107,8 +108,6 @@ class Safe:
                 'vendor': self.vendor,
                 'id': self.id
             },
-            'publicKey': base64.b64encode(keys.public_key.__bytes__()),
-            'nonce': base64.b64encode(nonce),
             'permissions': permissions
         }
         r = self._post('auth', payload)
@@ -116,9 +115,25 @@ class Safe:
             responseJson = r.json()
             self.token = responseJson['token']
             self.permissions = responseJson['permissions']
+            self._save_token()
             return True
         else:
             return False
+
+    def _get_saved_token(self):
+        try:
+            with open(expanduser('~/.safe_store'), 'r') as f:
+                self.token = f.read()
+            return True
+        except:
+            return None
+
+    def _save_token(self):
+        try:
+            with open(expanduser('~/.safe_store'), 'w') as f:
+                f.write(self.token)
+        except:
+            pass
 
     def is_authenticated(self):
         try: # If not token saved definitely not authenticated
