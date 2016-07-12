@@ -124,7 +124,11 @@ class Safe:
         try:
             with open(expanduser('~/.safe_store'), 'r') as f:
                 self.token = f.read()
-            return True
+            if self.is_authenticated():
+                return True
+            else:
+                self.token = ''
+                return False
         except:
             return None
 

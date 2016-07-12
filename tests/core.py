@@ -9,13 +9,13 @@ from safeAPI import Safe
 
 import unittest
 
-class Authorization(unittest.TestCase):
+class SafeCore(unittest.TestCase):
 
     def setUp(self):
-        self.safe = Safe('unittests2',
-                '0.0.2',
-                'hintofbasil2',
-                'com.github.hintofbasil2'
+        self.safe = Safe('unittests',
+                '0.0.1',
+                'hintofbasil',
+                'com.github.hintofbasil'
                 )
         self.safe.authenticate(permissions=[])
 
@@ -25,7 +25,7 @@ class Authorization(unittest.TestCase):
 
     def testDeauthenticate(self):
         self.safe.deauthenticate()
-        response = seld.safe.is_authenticated()
+        response = self.safe.is_authenticated()
         self.assertTrue(response is false)
 
 if __name__=='__main__':
