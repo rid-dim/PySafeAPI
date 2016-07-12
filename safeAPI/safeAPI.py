@@ -9,7 +9,14 @@ import urllib
 from os.path import expanduser
 
 class SafeException(Exception):
-    pass
+
+    def __init__(self, response):
+        self._raw_text = response.text
+        s = '<[%d] %s>' % (response.status_code, response.text)
+        super(SafeException, self).__init__(s)
+
+    def json(self):
+        return json.loads(self._raw_text)
 
 class Safe:
 
@@ -51,23 +58,6 @@ class Safe:
             headers['Authorization'] = 'Bearer %s' % self.token
         url = self._get_url(path)
         payload = json.dumps(payload)
-        r = requests.post(url,
-            data=payload,
-            headers=headers)
-        return r
-
-    def _post_encrypted(self, path, payload):
-        if not self.symmetricNonce or not self.symmetricKey:
-            raise SafeException("Unauthorised")
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization':'Bearer %s' % self.token
-        }
-        url = self._get_url(path)
-        payload = json.dumps(payload)
-        encryptedData = crypto_box_afternm(payload, self.symmetricNonce,
-                self.symmetricKey)
-        payload = base64.b64encode(encryptedData)
         r = requests.post(url,
             data=payload,
             headers=headers)
@@ -151,22 +141,19 @@ class Safe:
         else:
             return False
 
-    def mkdir(self, dirPath, isPrivate, isVersioned, isPathShared=None, metadata=None):
-        if isPathShared is None:
-            isPathShared = self.isShared
-
+    def mkdir(self, rootPath, dirPath, isPrivate, metadata=None):
+        if metadata is not None:
+            metadata = base64.b64encode(metadata)
         payload = {
-                'dirPath': dirPath,
-                'isPrivate': isPrivate,
-                'metadata': metadata,
-                'isVersioned': isVersioned,
-                'isPathShared': isPathShared
+            'isPrivate': isPrivate,
+            'metadata': metadata,
         }
-        r = self._post_encrypted('nfs/directory', payload)
+        url = 'nfs/directory/%s/%s' % (rootPath, dirPath)
+        r = self._post(url, payload)
         if r.status_code == 200:
             return True
         else:
-            raise SafeException(self._decrypt_response(r.text))
+            raise SafeException(r)
 
     def get_dir(self, dirPath, isPathShared=None):
         if isPathShared is None:
