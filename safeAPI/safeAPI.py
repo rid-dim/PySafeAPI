@@ -155,20 +155,13 @@ class Safe:
         else:
             raise SafeException(r)
 
-    def get_dir(self, dirPath, isPathShared=None):
-        if isPathShared is None:
-            isPathShared = self.isShared
-
-        isPathShared = self.isShared or isPathShared
-        dirPath = urllib.quote_plus(dirPath)
-        # requires lower case
-        isPathShared = 'true' if isPathShared else 'false'
-        path = 'nfs/directory/%s/%s' % (dirPath, isPathShared)
-        r = self._get(path)
+    def get_dir(self, rootPath, dirPath):
+        url = 'nfs/directory/%s/%s' % (rootPath, dirPath)
+        r = self._get(url)
         if r.status_code == 200:
-            return self._decrypt_response(r.text)
+            return json.loads(r.text)
         elif r.status_code == 401:
-            raise SafeException("Unauthorised")
+            raise SafeException(r)
         else:
             return None
 

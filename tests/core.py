@@ -41,5 +41,17 @@ class SafeCore(unittest.TestCase):
             self.safe.mkdir('app', path, False)
         self.assertEqual(cm.exception.json()['errorCode'], -502)
 
+    def testDirectoryGet(self):
+        path = ''.join(
+                random.choice(string.ascii_lowercase) for _ in range(10)
+            )
+        # Get non existant directory
+        self.assertEqual(self.safe.get_dir('app', path), None)
+        # Must create before getting
+        self.safe.mkdir('app', path, False)
+        response = self.safe.get_dir('app', path)
+        self.assertTrue(response is not None)
+        self.assertEqual(response['info']['name'], path)
+
 if __name__=='__main__':
     unittest.main()
