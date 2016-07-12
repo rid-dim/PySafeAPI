@@ -11,6 +11,8 @@ import random
 import string
 import unittest
 
+ROOT_DIR = 'drive'
+
 class SafeCore(unittest.TestCase):
 
     def setUp(self):
@@ -19,7 +21,10 @@ class SafeCore(unittest.TestCase):
                 'hintofbasil',
                 'com.github.hintofbasil'
                 )
-        self.safe.authenticate(permissions=[])
+        if ROOT_DIR == 'app':
+            self.safe.authenticate(permissions=[])
+        elif ROOT_DIR == 'drive':
+            self.safe.authenticate(permissions=['SAFE_DRIVE_ACCESS'])
 
     def testIsAuthenticateSuccess(self):
         response = self.safe.is_authenticated()
@@ -35,10 +40,10 @@ class SafeCore(unittest.TestCase):
                 random.choice(string.ascii_lowercase) for _ in range(10)
             )
         # Valid create
-        self.assertEqual(self.safe.mkdir('app', path, False), True)
+        self.assertEqual(self.safe.mkdir(ROOT_DIR, path, False), True)
         # Double create
         with self.assertRaises(SafeException) as cm:
-            self.safe.mkdir('app', path, False)
+            self.safe.mkdir(ROOT_DIR, path, False)
         self.assertEqual(cm.exception.json()['errorCode'], -502)
 
     def testDirectoryGet(self):
@@ -46,10 +51,10 @@ class SafeCore(unittest.TestCase):
                 random.choice(string.ascii_lowercase) for _ in range(10)
             )
         # Get non existant directory
-        self.assertEqual(self.safe.get_dir('app', path), None)
+        self.assertEqual(self.safe.get_dir(ROOT_DIR, path), None)
         # Must create before getting
-        self.safe.mkdir('app', path, False)
-        response = self.safe.get_dir('app', path)
+        self.safe.mkdir(ROOT_DIR, path, False)
+        response = self.safe.get_dir(ROOT_DIR, path)
         self.assertTrue(response is not None)
         self.assertEqual(response['info']['name'], path)
 
