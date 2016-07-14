@@ -26,6 +26,14 @@ class SafeCore(unittest.TestCase):
         elif ROOT_DIR == 'drive':
             self.safe.authenticate(permissions=['SAFE_DRIVE_ACCESS'])
 
+    def generate_path(self, depth=1):
+        add = lambda x,y: x + y
+        paths = [''.join(
+                    random.choice(string.ascii_lowercase) for _ in range(10)
+                ) + '/'
+                for _ in range(depth)]
+        return reduce(add, paths)[:-1]
+
     def testIsAuthenticateSuccess(self):
         response = self.safe.is_authenticated()
         self.assertTrue(response is True)
@@ -36,9 +44,7 @@ class SafeCore(unittest.TestCase):
         self.assertTrue(response is false)
 
     def testDirectoryCreate(self):
-        path = ''.join(
-                random.choice(string.ascii_lowercase) for _ in range(10)
-            )
+        path = self.generate_path()
         # Valid create
         self.assertEqual(self.safe.mkdir(ROOT_DIR, path, False), True)
         # Double create
@@ -47,9 +53,7 @@ class SafeCore(unittest.TestCase):
         self.assertEqual(cm.exception.json()['errorCode'], -502)
 
     def testDirectoryGet(self):
-        path = ''.join(
-                random.choice(string.ascii_lowercase) for _ in range(10)
-            )
+        path = self.generate_path()
         # Get non existant directory
         self.assertEqual(self.safe.get_dir(ROOT_DIR, path), None)
         # Must create before getting
@@ -59,25 +63,15 @@ class SafeCore(unittest.TestCase):
         self.assertEqual(response['info']['name'], path)
 
     def testFileCreate(self):
-        path = ''.join(
-                random.choice(string.ascii_lowercase) for _ in range(10)
-            )
-        file = ''.join(
-                random.choice(string.ascii_lowercase) for _ in range(10)
-            )
-        self.safe.mkdir(ROOT_DIR, path, False)
-        response = self.safe.create_file(ROOT_DIR, path + '/' + file)
+        path = self.generate_path(depth=2)
+        self.safe.mkdir(ROOT_DIR, path.split('/')[0], False)
+        response = self.safe.create_file(ROOT_DIR, path)
         self.assertEqual(response, True)
 
     def testFileCreateMissingDirectory(self):
-        path = ''.join(
-                random.choice(string.ascii_lowercase) for _ in range(10)
-            )
-        file = ''.join(
-                random.choice(string.ascii_lowercase) for _ in range(10)
-            )
+        path = self.generate_path(depth=2)
         with self.assertRaises(SafeException) as cm:
-            self.safe.create_file(ROOT_DIR, path + '/' + file)
+            self.safe.create_file(ROOT_DIR, path)
         self.assertEqual(cm.exception.json()['errorCode'], -1502)
 
 if __name__=='__main__':
