@@ -58,5 +58,27 @@ class SafeCore(unittest.TestCase):
         self.assertTrue(response is not None)
         self.assertEqual(response['info']['name'], path)
 
+    def testFileCreate(self):
+        path = ''.join(
+                random.choice(string.ascii_lowercase) for _ in range(10)
+            )
+        file = ''.join(
+                random.choice(string.ascii_lowercase) for _ in range(10)
+            )
+        self.safe.mkdir(ROOT_DIR, path, False)
+        response = self.safe.create_file(ROOT_DIR, path + '/' + file)
+        self.assertEqual(response, True)
+
+    def testFileCreateMissingDirectory(self):
+        path = ''.join(
+                random.choice(string.ascii_lowercase) for _ in range(10)
+            )
+        file = ''.join(
+                random.choice(string.ascii_lowercase) for _ in range(10)
+            )
+        with self.assertRaises(SafeException) as cm:
+            self.safe.create_file(ROOT_DIR, path + '/' + file)
+        self.assertEqual(cm.exception.json()['errorCode'], -1502)
+
 if __name__=='__main__':
     unittest.main()

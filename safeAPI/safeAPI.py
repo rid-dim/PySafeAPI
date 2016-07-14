@@ -165,23 +165,18 @@ class Safe:
         else:
             return None
 
-    def post_file(self, filePath, isPrivate, isVersioned,
-            isPathShared=None, metadata=None):
-        if isPathShared is None:
-            isPathShared = self.isShared
-
+    def create_file(self, rootPath, filePath, metadata=None):
+        if metadata is not None:
+            metadata = base64.b64encode(metadata)
         payload = {
-            'filePath': filePath,
-            'isPRivate': isPrivate,
             'metadata': metadata,
-            'isVersioned': isVersioned,
-            'isPathShared': isPathShared
         }
-        r = self._post_encrypted('nfs/file', payload)
+        url = 'nfs/file/%s/%s' % (rootPath, filePath)
+        r = self._post(url, payload)
         if r.status_code == 200:
             return True
         else:
-            raise SafeException(self._decrypt_response(r.text))
+            raise SafeException(r)
 
     def get_file(self, dirPath, isPathShared=None,
             offset=None, length=None):
