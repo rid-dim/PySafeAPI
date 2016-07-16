@@ -166,6 +166,8 @@ class Safe:
             return None
 
     def create_file(self, rootPath, filePath, metadata=None):
+        # Streaming not implemented.  Request times out
+        raise NotImplementedError()
         if metadata is not None:
             metadata = base64.b64encode(metadata)
         payload = {
