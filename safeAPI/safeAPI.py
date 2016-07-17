@@ -204,11 +204,10 @@ class Safe:
             raise SafeException(r)
 
     def get_dns(self, longName):
-        longName = urllib.quote_plus(longName)
-        path = 'dns/%s' % longName
-        r = self._get(path)
+        url = 'dns/%s' % longName
+        r = self._get(url)
         if r.status_code == 200:
-            return self._decrypt_response(r.text)
+            return json.loads(r.text)
         elif r.status_code == 401:
             raise SafeException("Unauthorised")
         else:

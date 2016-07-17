@@ -83,5 +83,20 @@ class SafeCore(unittest.TestCase):
         response = self.safe.register_dns(longname, serviceName, path)
         self.assertTrue(response, True)
 
+    def testDnsGet(self):
+        longname = self.generate_path()
+        serviceName = self.generate_path()
+        path = self.generate_path()
+        #TODO research app requirement
+        self.safe.mkdir('app', path, False)
+        self.safe.register_dns(longname, serviceName, path)
+        response = self.safe.get_dns(longname)
+        self.assertEqual(response, [serviceName])
+
+    def testDnsGetNonExistant(self):
+        longname = self.generate_path()
+        response = self.safe.get_dns(longname)
+        self.assertEqual(response, None)
+
 if __name__=='__main__':
     unittest.main()
