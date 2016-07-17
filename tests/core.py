@@ -79,7 +79,7 @@ class SafeCore(unittest.TestCase):
         serviceName = self.generate_path()
         path = self.generate_path()
         #TODO research app requirement
-        print self.safe.mkdir('app', path, False)
+        self.safe.mkdir('app', path, False)
         response = self.safe.register_dns(longname, serviceName, path)
         self.assertTrue(response, True)
 
