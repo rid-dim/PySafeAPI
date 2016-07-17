@@ -22,14 +22,12 @@ class Safe:
             vendor,
             id,
             addr='http://localhost',
-            port=8100,
-            isShared=False):
+            port=8100):
         self.name = name
         self.version = version
         self.vendor = vendor
         self.id = id
         self.url = "%s:%d/" % (addr, port)
-        self.isShared = isShared
         self.token = ""
 
     def _get_url(self, location):
@@ -58,31 +56,6 @@ class Safe:
             data=payload,
             headers=headers)
         return r
-
-    def _put_encrypted(self, path, payload, isJson=False):
-        if not self.symmetricNonce or not self.symmetricKey:
-            raise SafeException("Unauthorised")
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization':'Bearer %s' % self.token
-        }
-        url = self._get_url(path)
-        if isJson:
-            payload = json.dumps(payload)
-        encryptedData = crypto_box_afternm(payload, self.symmetricNonce,
-                self.symmetricKey)
-        payload = base64.b64encode(encryptedData)
-        r = requests.put(url,
-            data=payload,
-            headers=headers)
-        return r
-
-    def _decrypt_response(self, message, is_json=True):
-        message = crypto_box_open_afternm(base64.b64decode(message),
-                self.symmetricNonce, self.symmetricKey)
-        if is_json:
-            message = json.loads(message)
-        return message
 
     def authenticate(self, permissions=[]): #TODO check is needs to = None
         if self._get_saved_token():
