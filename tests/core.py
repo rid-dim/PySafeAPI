@@ -11,7 +11,7 @@ import random
 import string
 import unittest
 
-ROOT_DIR = 'drive'
+ROOT_DIR = 'app'
 
 class SafeCore(unittest.TestCase):
 
@@ -73,6 +73,15 @@ class SafeCore(unittest.TestCase):
         with self.assertRaises(SafeException) as cm:
             self.safe.create_file(ROOT_DIR, path)
         self.assertEqual(cm.exception.json()['errorCode'], -1502)
+
+    def testDnsRegister(self):
+        longname = self.generate_path()
+        serviceName = self.generate_path()
+        path = self.generate_path()
+        #TODO research app requirement
+        print self.safe.mkdir('app', path, False)
+        response = self.safe.register_dns(longname, serviceName, path)
+        self.assertTrue(response, True)
 
 if __name__=='__main__':
     unittest.main()
