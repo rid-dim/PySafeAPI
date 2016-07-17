@@ -1,7 +1,3 @@
-from nacl.public import PrivateKey, Box, PublicKey
-from nacl.bindings.crypto_box import (crypto_box_afternm,
-        crypto_box_open_afternm)
-import nacl.utils
 import requests
 import base64
 import json
@@ -220,22 +216,17 @@ class Safe:
         else:
             raise SafeException(self._decrypt_response(r.text))
 
-    def post_dns(self, longName, serviceName, serviceHomeDirPath,
-            isPathShared=None):
-        if isPathShared is None:
-            isPathShared = self.isShared
-
+    def register_dns(self, longName, serviceName, serviceHomeDirPath):
         payload = {
             'longName': longName,
             'serviceName': serviceName,
             'serviceHomeDirPath': serviceHomeDirPath,
-            'isPathShared': isPathShared
         }
-        r = self._post_encrypted('dns', payload)
+        r = self._post('dns', payload)
         if r.status_code == 200:
             return True
         else:
-            raise SafeException(self._decrypt_response(r.text))
+            raise SafeException(r)
 
     def get_dns(self, longName):
         longName = urllib.quote_plus(longName)
