@@ -2,6 +2,7 @@ import requests
 import base64
 import json
 import urllib
+import sys
 from os.path import expanduser
 
 class SafeException(Exception):
@@ -54,6 +55,20 @@ class Safe:
         payload = json.dumps(payload)
         r = requests.post(url,
             data=payload,
+            headers=headers)
+        return r
+
+    def _post_file(self, path, payload, content):
+        headers = {
+            'Content-Type': 'application/json',
+            'Content-Length': sys.getsizeof(content)
+        }
+        if self.token:
+            headers['Authorization'] = 'Bearer %s' % self.token
+        url = self._get_url(path)
+        payload = json.dumps(payload)
+        r = requests.post(url,
+            data=content,
             headers=headers)
         return r
 
@@ -134,62 +149,29 @@ class Safe:
         else:
             return None
 
-    def create_file(self, rootPath, filePath, metadata=None):
-        # Streaming not implemented.  Request times out
-        raise NotImplementedError()
-        if metadata is not None:
-            metadata = base64.b64encode(metadata)
+    def create_file(self, rootPath, filePath, content, metadata=None):
         payload = {
             'metadata': metadata,
         }
         url = 'nfs/file/%s/%s' % (rootPath, filePath)
-        r = self._post(url, payload)
+        if content:
+            r = self._post_file(url, payload, content)
+        else:
+            r = self._post(url, payload)
         if r.status_code == 200:
             return True
         else:
             raise SafeException(r)
 
-    def get_file(self, dirPath, isPathShared=None,
-            offset=None, length=None):
-        if isPathShared is None:
-            isPathShared = self.isShared
-
-        args = {}
-        if offset is not None:
-            args['offset'] = offset
-        if length is not None:
-            args['length'] = length
-        dirPath = urllib.quote_plus(dirPath)
-        # requires lower case
-        isPathShared = 'true' if isPathShared else 'false'
-        path = 'nfs/file/%s/%s' % (dirPath, isPathShared)
-        if args:
-            path = path + "?" + urllib.urlencode(args)
+    def read_file(self, rootPath, dirPath):
+        path = 'nfs/file/%s/%s' % (rootPath, dirPath)
         r = self._get(path)
         if r.status_code == 200:
-            return self._decrypt_response(r.text, is_json=False)
+            return r.text
         elif r.status_code == 401:
-            raise SafeException("Unauthorised")
+            raise SafeException(r)
         else:
             return None
-
-    def put_file(self, data, filePath, isPathShared=None, offset=None):
-        if isPathShared is None:
-            isPathShared = self.isShared
-
-        args = {}
-        if offset is not None:
-            args['offset'] = offset
-        filePath = urllib.quote_plus(filePath)
-        isPathShared = 'true' if isPathShared else 'false'
-        path = 'nfs/file/%s/%s' % (filePath, isPathShared)
-        if args:
-            path = path + "?" + urllib.urlencode(args)
-        r = self._put_encrypted(path, data)
-        if r.status_code == 200:
-            return True
-        else:
-            raise SafeException(self._decrypt_response(r.text))
 
     def register_dns(self, longName, serviceName, serviceHomeDirPath):
         payload = {

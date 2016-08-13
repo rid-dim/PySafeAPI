@@ -63,15 +63,26 @@ class SafeCore(unittest.TestCase):
         self.assertEqual(response['info']['name'], path)
 
     def testFileCreate(self):
-        path = self.generate_path(depth=2)
-        self.safe.mkdir(ROOT_DIR, path.split('/')[0], False)
-        response = self.safe.create_file(ROOT_DIR, path)
+        path = self.generate_path()
+        response = self.safe.create_file(ROOT_DIR, path, None)
         self.assertEqual(response, True)
+
+    def testFileCreateWithContent(self):
+        path = self.generate_path()
+        response = self.safe.create_file(ROOT_DIR, path, "Test data")
+        self.assertEqual(response, True)
+
+    def testFileRead(self):
+        content = "Test data"
+        path = self.generate_path()
+        self.safe.create_file(ROOT_DIR, path, content)
+        response = self.safe.read_file(ROOT_DIR, path)
+        self.assertEqual(response, content)
 
     def testFileCreateMissingDirectory(self):
         path = self.generate_path(depth=2)
         with self.assertRaises(SafeException) as cm:
-            self.safe.create_file(ROOT_DIR, path)
+            self.safe.create_file(ROOT_DIR, path, None)
         self.assertEqual(cm.exception.json()['errorCode'], -1502)
 
     def testDnsRegister(self):
