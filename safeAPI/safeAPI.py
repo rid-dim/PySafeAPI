@@ -1,7 +1,7 @@
 import requests
-import base64
 import json
 import urllib
+import hashlib
 import sys
 from os.path import expanduser
 
@@ -73,6 +73,8 @@ class Safe:
         return r
 
     def authenticate(self, permissions=[]): #TODO check is needs to = None
+        # map is required as /auth returns unicode
+        self.permissions = map(unicode, permissions)
         if self._get_saved_token():
             return True
         payload = {
@@ -97,21 +99,42 @@ class Safe:
     def _get_saved_token(self):
         try:
             with open(expanduser('~/.safe_store'), 'r') as f:
-                self.token = f.read()
+                appHash = self._get_app_hash()
+                tokens = json.loads(f.read())
+                self.token = tokens[appHash]
             if self.is_authenticated():
                 return True
             else:
                 self.token = ''
                 return False
-        except:
-            return None
+        except (IOError, ValueError, KeyError):
+            self.token = ''
+            return False
 
     def _save_token(self):
         try:
-            with open(expanduser('~/.safe_store'), 'w') as f:
-                f.write(self.token)
-        except:
+            with open(expanduser('~/.safe_store'), 'r+') as f:
+                appHash = self._get_app_hash()
+                try:
+                    tokens = json.loads(f.read())
+                except ValueError:
+                    tokens = {}
+                tokens[appHash] = self.token
+                f.seek(0)
+                f.write(json.dumps(tokens))
+                f.truncate()
+        except IOError:
             pass
+
+    def _get_app_hash(self):
+        # Tokens will be in plain text - md5 will suffice
+        m = hashlib.md5()
+        m.update(self.name)
+        m.update(self.version)
+        m.update(self.vendor)
+        m.update(self.id)
+        m.update(str(self.permissions))
+        return m.hexdigest()
 
     def is_authenticated(self):
         try: # If not token saved definitely not authenticated
