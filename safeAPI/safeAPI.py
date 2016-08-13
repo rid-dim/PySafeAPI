@@ -279,3 +279,11 @@ class Safe:
             return r.json()
         else:
             raise SafeException(r)
+
+    def delete_long_name(self, longName):
+        url = 'dns/%s' % longName
+        r = self._request('DELETE', url, None)
+        if r.status_code == 200:
+            return True
+        else:
+            raise SafeException(r)

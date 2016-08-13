@@ -165,5 +165,17 @@ class SafeCore(unittest.TestCase):
         response = self.safe.get_service_home_directory(serviceName, longName)
         self.assertTrue(response['info']['name'] == path)
 
+    def testDeleteLongName(self):
+        longName = self.generate_path()
+        self.safe.create_long_name(longName)
+        response = self.safe.get_long_names()
+        self.assertTrue(longName in response)
+        response = self.safe.get_long_names()
+        self.assertTrue(response)
+        response = self.safe.delete_long_name(longName)
+        self.assertTrue(response)
+        response = self.safe.get_long_names()
+        self.assertTrue(longName not in response)
+
 if __name__=='__main__':
     unittest.main()
