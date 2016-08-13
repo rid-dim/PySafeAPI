@@ -14,24 +14,36 @@ This will not include the examples which are downloadable by cloning this reposi
 
 Progress
 --------
-
+#### Authorization
 - [x] POST /auth
 - [x] GET /auth
-- [ ] DELETE /auth
-- [x] POST /nfs/directory
-- [x] GET /nfs/directory/:dirPath/:isPathShared
-- [ ] DELETE /nfs/directory/:dirPath/:isPathShared
-- [x] POST /nfs/file
-- [x] GET /nfs/file/:filePath/:isPathShared
-- [x] PUT /nfs/file/:filePath/:isPathShared
-- [ ] DELETE /nfs/file/:dirPath/:isPathShared
+- [ ] DELTE /auth
+
+#### NFS Directory
+- [x] POST /nfs/directory/:rootPath/:directoryPath
+- [x] GET /nfs/directory/:rootPath/:directoryPath/
+- [ ] PUT /nfs/directory/:rootPath/:directoryPath
+- [ ] POST /nfs/movedir
+- [ ] DELETE /nfs/directory/:rootPath/:directoryPath
+
+#### NFS File
+- [x] POST /nfs/file/:rootPath/:filePath
+- [ ] HEAD /nfs/file/:rootPath/:filePath
+- [x] GET /nfs/file/:rootPath/:filePath
+- [ ] PUT /nfs/file/metadata/:rootPath/:filePath
+- [ ] POST /nfs/movefile
+- [ ] DELETE /nfs/file/:rootPath/:filePath
+
+#### DNS
 - [ ] POST /dns/:longName
 - [x] POST /dns
 - [ ] PUT /dns
 - [ ] GET /dns
-- [x] GET/dns/:longName
+- [x] GET /dns/:longName
 - [ ] GET /dns/:serviceName/:longName
-- [ ] GET /dns/:serviceName/:longName/
+- [ ] GET /dns/:serviceName/:longName/:filePath
+- [ ] DELETE /dns/:serviceName/:longName
+- [ ] DELETE /dns/:longName
 
 Examples
 --------
