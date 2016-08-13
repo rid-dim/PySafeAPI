@@ -46,10 +46,10 @@ class SafeCore(unittest.TestCase):
     def testDirectoryCreate(self):
         path = self.generate_path()
         # Valid create
-        self.assertEqual(self.safe.mkdir(ROOT_DIR, path, False), True)
+        self.assertEqual(self.safe.mkdir(ROOT_DIR, path), True)
         # Double create
         with self.assertRaises(SafeException) as cm:
-            self.safe.mkdir(ROOT_DIR, path, False)
+            self.safe.mkdir(ROOT_DIR, path)
         self.assertEqual(cm.exception.json()['errorCode'], -502)
 
     def testDirectoryGet(self):
@@ -57,7 +57,7 @@ class SafeCore(unittest.TestCase):
         # Get non existant directory
         self.assertEqual(self.safe.get_dir(ROOT_DIR, path), None)
         # Must create before getting
-        self.safe.mkdir(ROOT_DIR, path, False)
+        self.safe.mkdir(ROOT_DIR, path)
         response = self.safe.get_dir(ROOT_DIR, path)
         self.assertTrue(response is not None)
         self.assertEqual(response['info']['name'], path)
@@ -89,7 +89,7 @@ class SafeCore(unittest.TestCase):
         longname = self.generate_path()
         serviceName = self.generate_path()
         path = self.generate_path()
-        self.safe.mkdir(ROOT_DIR, path, False)
+        self.safe.mkdir(ROOT_DIR, path)
         response = self.safe.register_dns(ROOT_DIR, longname, serviceName, path)
         self.assertTrue(response, True)
 
@@ -97,7 +97,7 @@ class SafeCore(unittest.TestCase):
         longname = self.generate_path()
         serviceName = self.generate_path()
         path = self.generate_path()
-        self.safe.mkdir(ROOT_DIR, path, False)
+        self.safe.mkdir(ROOT_DIR, path)
         self.safe.register_dns(ROOT_DIR, longname, serviceName, path)
         response = self.safe.get_dns(longname)
         self.assertEqual(response, [serviceName])
