@@ -20,7 +20,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 setup(
     name='PySafeAPI',
 
-    version='0.0.1.dev2',
+    version='0.0.1.dev3',
 
     description='A python wrapper around the Safe Launcher API.',
     long_description=long_description,
