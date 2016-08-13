@@ -89,18 +89,16 @@ class SafeCore(unittest.TestCase):
         longname = self.generate_path()
         serviceName = self.generate_path()
         path = self.generate_path()
-        #TODO research app requirement
-        self.safe.mkdir('app', path, False)
-        response = self.safe.register_dns(longname, serviceName, path)
+        self.safe.mkdir(ROOT_DIR, path, False)
+        response = self.safe.register_dns(ROOT_DIR, longname, serviceName, path)
         self.assertTrue(response, True)
 
     def testDnsGet(self):
         longname = self.generate_path()
         serviceName = self.generate_path()
         path = self.generate_path()
-        #TODO research app requirement
-        self.safe.mkdir('app', path, False)
-        self.safe.register_dns(longname, serviceName, path)
+        self.safe.mkdir(ROOT_DIR, path, False)
+        self.safe.register_dns(ROOT_DIR, longname, serviceName, path)
         response = self.safe.get_dns(longname)
         self.assertEqual(response, [serviceName])
 

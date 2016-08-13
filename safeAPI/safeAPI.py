@@ -173,8 +173,9 @@ class Safe:
         else:
             return None
 
-    def register_dns(self, longName, serviceName, serviceHomeDirPath):
+    def register_dns(self, rootPath, longName, serviceName, serviceHomeDirPath):
         payload = {
+            'rootPath': rootPath,
             'longName': longName,
             'serviceName': serviceName,
             'serviceHomeDirPath': serviceHomeDirPath,
