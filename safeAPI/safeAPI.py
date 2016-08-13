@@ -185,6 +185,22 @@ class Safe:
         else:
             raise SafeException(r)
 
+    def move_dir(self, srcRootPath, srcPath,
+            destRootPath, destPath, action='move'):
+        payload = {
+            'srcRootPath': srcRootPath,
+            'srcPath': srcPath,
+            'destRootPath': destRootPath,
+            'destPath': destPath,
+            'action': action
+        }
+        url = 'nfs/movedir'
+        r = self._post(url, payload)
+        if r.status_code == 200:
+            return True
+        else:
+            raise SafeException(r)
+
     def create_file(self, rootPath, filePath, content, metadata=None):
         payload = {
             'metadata': metadata,

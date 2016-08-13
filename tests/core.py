@@ -72,6 +72,19 @@ class SafeCore(unittest.TestCase):
         self.assertTrue(response is not None)
         self.assertEqual(response['info']['name'], newPath)
 
+    def testDirectoryMove(self):
+        path = self.generate_path()
+        newPath = self.generate_path()
+        self.safe.mkdir(ROOT_DIR, path)
+        # Destination path must exist
+        self.safe.mkdir(ROOT_DIR, newPath)
+        response = self.safe.move_dir(ROOT_DIR, path,
+                ROOT_DIR, newPath)
+        self.assertTrue(response)
+        response = self.safe.get_dir(ROOT_DIR, newPath)
+        self.assertTrue(response is not None)
+        self.assertEqual(response['info']['name'], newPath)
+
     def testFileCreate(self):
         path = self.generate_path()
         response = self.safe.create_file(ROOT_DIR, path, None)
