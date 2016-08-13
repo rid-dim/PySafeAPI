@@ -233,6 +233,14 @@ class Safe:
         else:
             return None
 
+    def create_long_name(self, longname):
+        url = 'dns/%s/' % longname
+        r = self._post(url, None)
+        if r.status_code == 200:
+            return True
+        else:
+            raise SafeException(r)
+
     def register_dns(self, rootPath, longName, serviceName, serviceHomeDirPath):
         payload = {
             'rootPath': rootPath,

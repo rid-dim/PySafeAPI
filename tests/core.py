@@ -137,6 +137,11 @@ class SafeCore(unittest.TestCase):
         response = self.safe.get_dns(longname)
         self.assertEqual(response, [serviceName])
 
+    def testDnsCreateLongName(self):
+        longname = self.generate_path()
+        response = self.safe.create_long_name(longname)
+        self.assertTrue(response)
+
     def testDnsGetNonExistant(self):
         longname = self.generate_path()
         response = self.safe.get_dns(longname)

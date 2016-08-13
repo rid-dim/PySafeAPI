@@ -35,7 +35,7 @@ Progress
 - [ ] DELETE /nfs/file/:rootPath/:filePath
 
 #### DNS
-- [ ] POST /dns/:longName
+- [x] POST /dns/:longName
 - [x] POST /dns
 - [ ] PUT /dns
 - [ ] GET /dns
