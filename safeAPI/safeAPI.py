@@ -125,11 +125,8 @@ class Safe:
         else:
             return False
 
-    def mkdir(self, rootPath, dirPath, isPrivate, metadata=None):
-        if metadata is not None:
-            metadata = base64.b64encode(metadata)
+    def mkdir(self, rootPath, dirPath, metadata=None):
         payload = {
-            'isPrivate': isPrivate,
             'metadata': metadata,
         }
         url = 'nfs/directory/%s/%s' % (rootPath, dirPath)
