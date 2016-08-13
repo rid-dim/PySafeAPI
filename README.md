@@ -38,7 +38,7 @@ Progress
 - [x] POST /dns/:longName
 - [x] POST /dns
 - [ ] PUT /dns
-- [ ] GET /dns
+- [x] GET /dns
 - [x] GET /dns/:longName
 - [ ] GET /dns/:serviceName/:longName
 - [ ] GET /dns/:serviceName/:longName/:filePath

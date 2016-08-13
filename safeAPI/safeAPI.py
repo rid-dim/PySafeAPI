@@ -254,6 +254,14 @@ class Safe:
         else:
             raise SafeException(r)
 
+    def get_long_names(self):
+        url = 'dns/'
+        r = self._get(url)
+        if r.status_code == 200:
+            return r.json()
+        else:
+            raise SafeException(r)
+
     def get_dns(self, longName):
         url = 'dns/%s' % longName
         r = self._get(url)
