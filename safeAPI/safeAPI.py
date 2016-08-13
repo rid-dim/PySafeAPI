@@ -201,6 +201,14 @@ class Safe:
         else:
             raise SafeException(r)
 
+    def delete_dir(self, rootPath, dirPath):
+        url = 'nfs/directory/%s/%s' % (rootPath, dirPath)
+        r = self._request('delete', url, None)
+        if r.status_code == 200:
+            return True
+        else:
+            raise SafeException(r)
+
     def create_file(self, rootPath, filePath, content, metadata=None):
         payload = {
             'metadata': metadata,

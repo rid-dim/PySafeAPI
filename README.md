@@ -24,7 +24,7 @@ Progress
 - [x] GET /nfs/directory/:rootPath/:directoryPath/
 - [x] PUT /nfs/directory/:rootPath/:directoryPath
 - [x] POST /nfs/movedir
-- [ ] DELETE /nfs/directory/:rootPath/:directoryPath
+- [x] DELETE /nfs/directory/:rootPath/:directoryPath
 
 #### NFS File
 - [x] POST /nfs/file/:rootPath/:filePath
