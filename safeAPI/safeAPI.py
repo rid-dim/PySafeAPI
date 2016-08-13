@@ -271,3 +271,11 @@ class Safe:
             raise SafeException("Unauthorised")
         else:
             return None
+
+    def get_service_home_directory(self, serviceName, longName):
+        url = 'dns/%s/%s' % (serviceName, longName)
+        r = self._get(url)
+        if r.status_code == 200:
+            return r.json()
+        else:
+            raise SafeException(r)

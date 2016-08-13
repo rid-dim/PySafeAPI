@@ -40,7 +40,7 @@ Progress
 - [ ] PUT /dns
 - [x] GET /dns
 - [x] GET /dns/:longName
-- [ ] GET /dns/:serviceName/:longName
+- [x] GET /dns/:serviceName/:longName
 - [ ] GET /dns/:serviceName/:longName/:filePath
 - [ ] DELETE /dns/:serviceName/:longName
 - [ ] DELETE /dns/:longName

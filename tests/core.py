@@ -156,5 +156,14 @@ class SafeCore(unittest.TestCase):
         response = self.safe.get_dns(longname)
         self.assertEqual(response, None)
 
+    def testDnsGetServiceHomeDirectory(self):
+        serviceName = self.generate_path()
+        longName = self.generate_path()
+        path = self.generate_path()
+        self.safe.mkdir(ROOT_DIR, path)
+        self.safe.register_dns(ROOT_DIR, longName, serviceName, path)
+        response = self.safe.get_service_home_directory(serviceName, longName)
+        self.assertTrue(response['info']['name'] == path)
+
 if __name__=='__main__':
     unittest.main()
