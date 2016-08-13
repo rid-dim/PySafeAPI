@@ -49,11 +49,18 @@ Examples
 --------
 
 A selection of examples are located in the examples folder.  They can be run using the following command 
+
 `python -m examples.EXAMPLE_NAME`
+
 E.g To run the upload webpage example run
+
 `python -m examples.upload_webpage`
 
 Contributions
 -------------
 
-If you would like to contribute to the development of this project please feel free to submit a pull request.  Pull requests should be submitted to the current development branch.  Pull requests to master will be rejected.  Contributions for any of the missing URLs, extra examples, documentation and bug fixes are all welcome.
+If you would like to contribute to the development of this project please feel free to submit a pull request.
+
+Pull requests should be submitted to the current development branch.  Pull requests to master may be rejected.
+
+Contributions for any of the missing URLs, extra examples, documentation and bug fixes are all welcome.
