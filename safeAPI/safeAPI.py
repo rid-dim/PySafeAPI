@@ -46,6 +46,9 @@ class Safe:
         return r
 
     def _post(self, path, payload):
+        return self._request('POST', path, payload)
+
+    def _request(self, request, path, payload):
         headers = {
             'Content-Type': 'application/json'
         }
@@ -53,7 +56,8 @@ class Safe:
             headers['Authorization'] = 'Bearer %s' % self.token
         url = self._get_url(path)
         payload = json.dumps(payload)
-        r = requests.post(url,
+        r = requests.request(request,
+            url,
             data=payload,
             headers=headers)
         return r
@@ -168,6 +172,18 @@ class Safe:
             raise SafeException(r)
         else:
             return None
+
+    def update_dir(self, rootPath, dirPath, newPath, metadata=None):
+        payload = {
+            'name': newPath,
+            'metadata': metadata
+        }
+        url = 'nfs/directory/%s/%s' % (rootPath, dirPath)
+        r = self._request('put', url, payload)
+        if r.status_code == 200:
+            return True
+        else:
+            raise SafeException(r)
 
     def create_file(self, rootPath, filePath, content, metadata=None):
         payload = {
