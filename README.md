@@ -8,7 +8,7 @@ Installation
 
 PySafeAPI is installable from PyPi using the following command:
 
-`pip install PySafeAPI`
+`pip install SafeAPI`
 
 This will not include the examples which are downloadable by cloning this repository.
 

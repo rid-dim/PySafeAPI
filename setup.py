@@ -18,9 +18,9 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='PySafeAPI',
+    name='SafeAPI',
 
-    version='0.0.1.dev3',
+    version='0.0.2',
 
     description='A python wrapper around the Safe Launcher API.',
     long_description=long_description,
@@ -56,5 +56,5 @@ setup(
 
     packages=find_packages(exclude=['examples']),
 
-    install_requires=['requests', 'PyNaCl']
+    install_requires=['requests']
 )
