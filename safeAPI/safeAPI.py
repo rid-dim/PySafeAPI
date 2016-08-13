@@ -195,20 +195,3 @@ class Safe:
             raise SafeException("Unauthorised")
         else:
             return None
-
-    def put_dns(self, longName, serviceName, serviceHomeDirPath,
-            isPathShared=None):
-        if isPathShared is None:
-            isPathShared = self.isShared
-
-        payload = {
-            'longName': longName,
-            'serviceName': serviceName,
-            'serviceHomeDirPath': serviceHomeDirPath,
-            'isPathShared': isPathShared
-        }
-        r = self._put_encrypted('dns', payload, isJson=True)
-        if r.status_code == 200:
-            return True
-        else:
-            raise SafeException(self._decrypt_response(r.text))
