@@ -165,6 +165,19 @@ class SafeCore(unittest.TestCase):
         response = self.safe.get_service_home_directory(serviceName, longName)
         self.assertTrue(response['info']['name'] == path)
 
+    def testDnsDeleteServiceFromLongName(self):
+        longName = self.generate_path()
+        serviceName = self.generate_path()
+        path = self.generate_path()
+        self.safe.mkdir(ROOT_DIR, path)
+        self.safe.register_dns(ROOT_DIR, longName, serviceName, path)
+        response = self.safe.get_dns(longName)
+        self.assertTrue(serviceName in response)
+        response = self.safe.delete_service_from_long_name(serviceName, longName)
+        self.assertTrue(response)
+        response = self.safe.get_dns(longName)
+        self.assertTrue(serviceName not in response)
+
     def testDeleteLongName(self):
         longName = self.generate_path()
         self.safe.create_long_name(longName)

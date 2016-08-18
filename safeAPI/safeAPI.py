@@ -280,6 +280,14 @@ class Safe:
         else:
             raise SafeException(r)
 
+    def delete_service_from_long_name(self, serviceName, longName):
+        url = 'dns/%s/%s' % (serviceName, longName)
+        r = self._request('DELETE', url, None)
+        if r.status_code == 200:
+            return True
+        else:
+            raise SafeException(r)
+
     def delete_long_name(self, longName):
         url = 'dns/%s' % longName
         r = self._request('DELETE', url, None)

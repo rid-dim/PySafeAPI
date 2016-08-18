@@ -42,7 +42,7 @@ Progress
 - [x] GET /dns/:longName
 - [x] GET /dns/:serviceName/:longName
 - [ ] GET /dns/:serviceName/:longName/:filePath
-- [ ] DELETE /dns/:serviceName/:longName
+- [x] DELETE /dns/:serviceName/:longName
 - [x] DELETE /dns/:longName
 
 Examples
