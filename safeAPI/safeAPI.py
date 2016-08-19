@@ -237,7 +237,7 @@ class Safe:
         path = 'nfs/file/%s/%s' % (rootPath, filePath)
         r = self._request('DELETE', path, None)
         if r.status_code == 200:
-            return r.text
+            return True
         else:
             raise SafeException(r)
 
