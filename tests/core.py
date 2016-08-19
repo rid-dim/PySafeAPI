@@ -25,14 +25,24 @@ class SafeCore(unittest.TestCase):
             self.safe.authenticate(permissions=[])
         elif ROOT_DIR == 'drive':
             self.safe.authenticate(permissions=['SAFE_DRIVE_ACCESS'])
+        self.created_objects = {}
 
-    def generate_path(self, depth=1):
+    def tearDown(self):
+        for path in self.created_objects.get('dir', []):
+            try:
+                self.safe.delete_dir(ROOT_DIR, path)
+            except SafeException as e:
+                pass
+
+    def generate_path(self, type, depth=1):
         add = lambda x,y: x + y
         paths = [''.join(
                     random.choice(string.ascii_lowercase) for _ in range(10)
                 ) + '/'
                 for _ in range(depth)]
-        return reduce(add, paths)[:-1]
+        path = reduce(add, paths)[:-1]
+        self.created_objects[type] = self.created_objects.get(type, []) + [path]
+        return path
 
     def testIsAuthenticateSuccess(self):
         response = self.safe.is_authenticated()
@@ -44,7 +54,7 @@ class SafeCore(unittest.TestCase):
         self.assertTrue(response is false)
 
     def testDirectoryCreate(self):
-        path = self.generate_path()
+        path = self.generate_path('dir')
         # Valid create
         self.assertEqual(self.safe.mkdir(ROOT_DIR, path), True)
         # Double create
@@ -53,7 +63,7 @@ class SafeCore(unittest.TestCase):
         self.assertEqual(cm.exception.json()['errorCode'], -502)
 
     def testDirectoryGet(self):
-        path = self.generate_path()
+        path = self.generate_path('dir')
         # Get non existant directory
         self.assertEqual(self.safe.get_dir(ROOT_DIR, path), None)
         # Must create before getting
@@ -63,8 +73,8 @@ class SafeCore(unittest.TestCase):
         self.assertEqual(response['info']['name'], path)
 
     def testDirectoryPut(self):
-        path = self.generate_path()
-        newPath = self.generate_path()
+        path = self.generate_path('dir')
+        newPath = self.generate_path('dir')
         self.safe.mkdir(ROOT_DIR, path)
         response = self.safe.update_dir(ROOT_DIR, path, newPath)
         self.assertTrue(response)
@@ -73,8 +83,8 @@ class SafeCore(unittest.TestCase):
         self.assertEqual(response['info']['name'], newPath)
 
     def testDirectoryMove(self):
-        path = self.generate_path()
-        newPath = self.generate_path()
+        path = self.generate_path('dir')
+        newPath = self.generate_path('dir')
         self.safe.mkdir(ROOT_DIR, path)
         # Destination path must exist
         self.safe.mkdir(ROOT_DIR, newPath)
@@ -86,7 +96,7 @@ class SafeCore(unittest.TestCase):
         self.assertEqual(response['info']['name'], newPath)
 
     def testDirectoryDelete(self):
-        path = self.generate_path()
+        path = self.generate_path('dir')
         self.safe.mkdir(ROOT_DIR, path)
         response = self.safe.get_dir(ROOT_DIR, path)
         self.assertTrue(response is not None)
@@ -98,40 +108,40 @@ class SafeCore(unittest.TestCase):
 
 
     def testFileCreate(self):
-        path = self.generate_path()
+        path = self.generate_path('file')
         response = self.safe.create_file(ROOT_DIR, path, None)
         self.assertEqual(response, True)
 
     def testFileCreateWithContent(self):
-        path = self.generate_path()
+        path = self.generate_path('file')
         response = self.safe.create_file(ROOT_DIR, path, "Test data")
         self.assertEqual(response, True)
 
     def testFileRead(self):
         content = "Test data"
-        path = self.generate_path()
+        path = self.generate_path('file')
         self.safe.create_file(ROOT_DIR, path, content)
         response = self.safe.read_file(ROOT_DIR, path)
         self.assertEqual(response, content)
 
     def testFileCreateMissingDirectory(self):
-        path = self.generate_path(depth=2)
+        path = self.generate_path('file', depth=2)
         with self.assertRaises(SafeException) as cm:
             self.safe.create_file(ROOT_DIR, path, None)
         self.assertEqual(cm.exception.json()['errorCode'], -1502)
 
     def testDnsRegister(self):
-        longname = self.generate_path()
-        serviceName = self.generate_path()
-        path = self.generate_path()
+        longname = self.generate_path('longName')
+        serviceName = self.generate_path('service')
+        path = self.generate_path('dir')
         self.safe.mkdir(ROOT_DIR, path)
         response = self.safe.register_dns(ROOT_DIR, longname, serviceName, path)
         self.assertTrue(response, True)
 
     def testDnsAddServiceToLongName(self):
-        longName = self.generate_path()
-        serviceName = self.generate_path()
-        path = self.generate_path()
+        longName = self.generate_path('longName')
+        serviceName = self.generate_path('service')
+        path = self.generate_path('dir')
         self.safe.mkdir(ROOT_DIR, path)
         self.safe.create_long_name(longName)
         response = self.safe.get_dns(longName)
@@ -142,8 +152,8 @@ class SafeCore(unittest.TestCase):
         self.assertTrue(serviceName in response)
 
     def testDnsGetLongNames(self):
-        longname1 = self.generate_path()
-        longname2 = self.generate_path()
+        longname1 = self.generate_path('longName')
+        longname2 = self.generate_path('longName')
         self.safe.create_long_name(longname1)
         self.safe.create_long_name(longname2)
         response = self.safe.get_long_names()
@@ -151,37 +161,37 @@ class SafeCore(unittest.TestCase):
         self.assertTrue(longname2 in response)
 
     def testDnsGet(self):
-        longname = self.generate_path()
-        serviceName = self.generate_path()
-        path = self.generate_path()
+        longname = self.generate_path('longName')
+        serviceName = self.generate_path('service')
+        path = self.generate_path('dir')
         self.safe.mkdir(ROOT_DIR, path)
         self.safe.register_dns(ROOT_DIR, longname, serviceName, path)
         response = self.safe.get_dns(longname)
         self.assertEqual(response, [serviceName])
 
     def testDnsCreateLongName(self):
-        longname = self.generate_path()
+        longname = self.generate_path('longName')
         response = self.safe.create_long_name(longname)
         self.assertTrue(response)
 
     def testDnsGetNonExistant(self):
-        longname = self.generate_path()
+        longname = self.generate_path('longName')
         response = self.safe.get_dns(longname)
         self.assertEqual(response, None)
 
     def testDnsGetServiceHomeDirectory(self):
-        serviceName = self.generate_path()
-        longName = self.generate_path()
-        path = self.generate_path()
+        serviceName = self.generate_path('service')
+        longName = self.generate_path('longName')
+        path = self.generate_path('dir')
         self.safe.mkdir(ROOT_DIR, path)
         self.safe.register_dns(ROOT_DIR, longName, serviceName, path)
         response = self.safe.get_service_home_directory(serviceName, longName)
         self.assertTrue(response['info']['name'] == path)
 
     def testDnsDeleteServiceFromLongName(self):
-        longName = self.generate_path()
-        serviceName = self.generate_path()
-        path = self.generate_path()
+        longName = self.generate_path('longName')
+        serviceName = self.generate_path('service')
+        path = self.generate_path('dir')
         self.safe.mkdir(ROOT_DIR, path)
         self.safe.register_dns(ROOT_DIR, longName, serviceName, path)
         response = self.safe.get_dns(longName)
@@ -192,7 +202,7 @@ class SafeCore(unittest.TestCase):
         self.assertTrue(serviceName not in response)
 
     def testDeleteLongName(self):
-        longName = self.generate_path()
+        longName = self.generate_path('longName')
         self.safe.create_long_name(longName)
         response = self.safe.get_long_names()
         self.assertTrue(longName in response)
