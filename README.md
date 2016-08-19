@@ -32,7 +32,7 @@ Progress
 - [x] GET /nfs/file/:rootPath/:filePath
 - [ ] PUT /nfs/file/metadata/:rootPath/:filePath
 - [ ] POST /nfs/movefile
-- [ ] DELETE /nfs/file/:rootPath/:filePath
+- [x] DELETE /nfs/file/:rootPath/:filePath
 
 #### DNS
 - [x] POST /dns/:longName

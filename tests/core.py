@@ -138,6 +138,12 @@ class SafeCore(unittest.TestCase):
             self.safe.create_file(ROOT_DIR, path, None)
         self.assertEqual(cm.exception.json()['errorCode'], -1502)
 
+    def testFileDelete(self):
+        path = self.generate_path('file')
+        self.safe.create_file(ROOT_DIR, path, None)
+        response = self.safe.delete_file(ROOT_DIR, path)
+        self.assertTrue(response)
+
     def testDnsRegister(self):
         longname = self.generate_path('longName')
         serviceName = self.generate_path('service')

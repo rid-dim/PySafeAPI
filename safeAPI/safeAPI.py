@@ -233,6 +233,14 @@ class Safe:
         else:
             return None
 
+    def delete_file(self, rootPath, filePath):
+        path = 'nfs/file/%s/%s' % (rootPath, filePath)
+        r = self._request('DELETE', path, None)
+        if r.status_code == 200:
+            return r.text
+        else:
+            raise SafeException(r)
+
     def create_long_name(self, longname):
         url = 'dns/%s/' % longname
         r = self._post(url, None)
