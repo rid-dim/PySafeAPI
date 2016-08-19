@@ -128,6 +128,19 @@ class SafeCore(unittest.TestCase):
         response = self.safe.register_dns(ROOT_DIR, longname, serviceName, path)
         self.assertTrue(response, True)
 
+    def testDnsAddServiceToLongName(self):
+        longName = self.generate_path()
+        serviceName = self.generate_path()
+        path = self.generate_path()
+        self.safe.mkdir(ROOT_DIR, path)
+        self.safe.create_long_name(longName)
+        response = self.safe.get_dns(longName)
+        self.assertTrue(serviceName not in response)
+        response = self.safe.add_service(longName, serviceName, ROOT_DIR, path)
+        self.assertTrue(response)
+        response = self.safe.get_dns(longName)
+        self.assertTrue(serviceName in response)
+
     def testDnsGetLongNames(self):
         longname1 = self.generate_path()
         longname2 = self.generate_path()

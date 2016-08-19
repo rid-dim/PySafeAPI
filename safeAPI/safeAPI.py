@@ -254,6 +254,19 @@ class Safe:
         else:
             raise SafeException(r)
 
+    def add_service(self, longName, serviceName, rootPath, serviceHomeDirPath):
+        payload = {
+            'longName': longName,
+            'serviceName': serviceName,
+            'rootPath': rootPath,
+            'serviceHomeDirPath': serviceHomeDirPath
+        }
+        r = self._request('PUT', 'dns', payload)
+        if r.status_code == 200:
+            return True
+        else:
+            raise SafeException(r)
+
     def get_long_names(self):
         url = 'dns/'
         r = self._get(url)
