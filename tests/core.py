@@ -42,6 +42,15 @@ class SafeCore(unittest.TestCase):
                 if not e.json()['errorCode'] == -1002:
                     raise e
 
+        for path in self.created_objects.get('file', []):
+            try:
+                self.safe.delete_file(ROOT_DIR, path)
+            except SafeException as e:
+                if not (e.json()['errorCode'] == -507 or
+                        e.json()['errorCode'] == -1502):
+                    raise e
+
+
     def generate_path(self, type, depth=1):
         add = lambda x,y: x + y
         paths = [''.join(
