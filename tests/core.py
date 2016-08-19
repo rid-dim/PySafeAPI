@@ -34,6 +34,13 @@ class SafeCore(unittest.TestCase):
             except SafeException as e:
                 pass
 
+        for name in self.created_objects.get('longName', []):
+            try:
+                self.safe.delete_long_name(name)
+            except SafeException as e:
+                if not e.json()['errorCode'] == -1002:
+                    raise e
+
     def generate_path(self, type, depth=1):
         add = lambda x,y: x + y
         paths = [''.join(
