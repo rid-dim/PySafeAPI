@@ -20,7 +20,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 setup(
     name='SafeAPI',
 
-    version='0.0.4',
+    version='0.0.5',
 
     description='A python wrapper around the Safe Launcher API.',
     long_description=long_description,
@@ -54,7 +54,7 @@ setup(
 
     keywords='Maidsafe Safe API',
 
-    packages=find_packages(exclude=['examples']),
+    packages=find_packages(exclude=['examples', 'tests']),
 
     install_requires=['requests']
 )
