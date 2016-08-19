@@ -32,7 +32,8 @@ class SafeCore(unittest.TestCase):
             try:
                 self.safe.delete_dir(ROOT_DIR, path)
             except SafeException as e:
-                pass
+                if not e.json()['errorCode'] == -504:
+                    raise e
 
         for name in self.created_objects.get('longName', []):
             try:
