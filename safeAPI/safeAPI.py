@@ -62,15 +62,15 @@ class Safe:
             headers=headers)
         return r
 
-    def _post_file(self, path, payload, content):
+    def _post_file(self, path, payload, content, metadata=None):
         headers = {
             'Content-Type': 'application/json',
-            'Content-Length': sys.getsizeof(content)
+            'Content-Length': sys.getsizeof(content),
+            'metadata': metadata
         }
         if self.token:
             headers['Authorization'] = 'Bearer %s' % self.token
         url = self._get_url(path)
-        payload = json.dumps(payload)
         r = requests.post(url,
             data=content,
             headers=headers)
@@ -99,6 +99,18 @@ class Safe:
             return True
         else:
             return False
+
+    def revoke(self):
+        if self.is_authenticated:
+            headers={}
+            headers['Authorization'] = 'Bearer %s' % self.token
+            r = requests.delete('http://localhost:8100/auth',headers=headers)
+            if r.status_code == 200:
+                return True
+            else:
+                return False
+        else:
+            return True
 
     def _get_saved_token(self):
         try:
@@ -213,7 +225,8 @@ class Safe:
         payload = {
             'metadata': metadata,
         }
-        url = 'nfs/file/%s/%s' % (rootPath, filePath)
+        #url = 'nfs/file/%s/%s' % (rootPath, filePath)
+        url = '%s' % (filePath)
         if content:
             r = self._post_file(url, payload, content)
         else:
@@ -223,8 +236,39 @@ class Safe:
         else:
             raise SafeException(r)
 
-    def read_file(self, rootPath, dirPath):
-        path = 'nfs/file/%s/%s' % (rootPath, dirPath)
+    def upload_file(self, safeFilePath, uploadFilepath, uploadFilename, newUploadName=None, encoding='latin-1'):
+        if newUploadName is None:
+            newUploadName=uploadFilename
+        try:
+            with open('%s/%s' % (uploadFilepath, uploadFilename),'rb') as f:
+                inputData=f.readlines()
+            f.close()
+            if type(inputData) == list:
+                innerData=inputData[0]
+                for i in range(len(inputData)-1):
+                    innerData+=inputData[i+1]
+            else:
+                innerData = inputData
+            dataFile=innerData.decode(encoding).encode('utf-8')
+            path='nfs/file/%s/%s' % (safeFilePath, newUploadName)
+            r = self._post_file(path,'',dataFile)
+        except:
+            return False
+        return r
+
+    def download_file(self, safeFilePath, downloadFilepath, downloadFilename, newDownloadname=None, encoding='latin-1'):
+        if newDownloadname is None:
+            newDownloadname = downloadFilename
+        try:
+            with open('%s/%s' % (downloadFilepath, newDownloadname),'wb') as f:
+                f.write(self._get('nfs/file/%s/%s' % (safeFilePath, downloadFilename)).content.decode('utf-8').encode(encoding))
+            f.close()
+        except:
+            return False
+        return True
+
+    def read_file(self, rootPath, filePath):
+        path = 'nfs/file/%s/%s' % (rootPath, filePath)
         r = self._get(path)
         if r.status_code == 200:
             return r.text
