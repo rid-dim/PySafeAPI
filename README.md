@@ -1,9 +1,7 @@
 PySafeAPI
 =========
 
-<?php
-include 'safeAPI/safeAPI.html';
-?>
+![Image of Yaktocat](https://octodex.github.com/images/yaktocat.png)
 
 A python wrapper around the [Safe Launcher API](https://maidsafe.readme.io/docs/introduction).
 
