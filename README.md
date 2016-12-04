@@ -1,7 +1,7 @@
 PySafeAPI
 =========
 
-![Image of Yaktocat](https://octodex.github.com/images/yaktocat.png)
+![Notebook self-documenting script](safeAPI/safeAPI.html)
 
 A python wrapper around the [Safe Launcher API](https://maidsafe.readme.io/docs/introduction).
 
