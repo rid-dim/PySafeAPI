@@ -1,7 +1,9 @@
 PySafeAPI
 =========
 
-@@include('safeAPI/safeAPI.html')
+<?php
+include 'safeAPI/safeAPI.html';
+?>
 
 A python wrapper around the [Safe Launcher API](https://maidsafe.readme.io/docs/introduction).
 
