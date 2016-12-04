@@ -1,6 +1,8 @@
 PySafeAPI
 =========
 
+@@include('safeAPI/safeAPI.html')
+
 A python wrapper around the [Safe Launcher API](https://maidsafe.readme.io/docs/introduction).
 
 Installation
