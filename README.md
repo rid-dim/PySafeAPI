@@ -1,7 +1,7 @@
 PySafeAPI
 =========
 
-![html export of the self-documenting script](https://rid-dim.github.io/PySafeAPI/safeAPI/safeAPI.html)
+[html export of the self-documenting script](https://rid-dim.github.io/PySafeAPI/safeAPI/safeAPI)
 
 A python wrapper around the [Safe Launcher API](https://maidsafe.readme.io/docs/introduction).
 
