@@ -11845,9 +11845,53 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="for-requests-we-need-to-include-the-issued-token-in-the-header-of-our-request">for requests we need to include the issued token in the header of our request<a class="anchor-link" href="#for-requests-we-need-to-include-the-issued-token-in-the-header-of-our-request">&#182;</a></h3><p>Description of <a href="https://api.safedev.org/low-level-api/immutable-data/read-immutable-data.html">Get immutable Data</a> is found at the Linked website</p>
-<p><img src="immutable_data_request_00.png" alt="immutable_data" title="request format">
-<img src="immutable_data_request_01.png" alt="immutable_data" title="request header">
-<img src="immutable_data_request_02.png" alt="immutable_data" title="response format"></p>
+<p>As shown in the documentation requests look like this:</p>
+<div class="highlight"><pre><span></span><span class="nx">GET</span> <span class="o">/</span><span class="nx">immutable</span><span class="o">-</span><span class="nx">data</span><span class="o">/:</span><span class="nx">handleId</span>
+</pre></div>
+<h3 id="URL:">URL:<a class="anchor-link" href="#URL:">&#182;</a></h3><h5 id="Example">Example<a class="anchor-link" href="#Example">&#182;</a></h5>
+<pre><code>http://localhost:8100/immutable-data/2</code></pre>
+<h3 id="Headers:">Headers:<a class="anchor-link" href="#Headers:">&#182;</a></h3><table>
+<thead><tr>
+<th>Field</th>
+<th style="text-align:center">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Authorization</td>
+<td style="text-align:center">The <a href="https://api.safedev.org/auth">authorization token</a> obtained from SAFE Launcher.</td>
+</tr>
+<tr>
+<td>Range</td>
+<td style="text-align:center">Partial content of the immutable data can be obtained by specifying the range. The start and end offset can be passed in the range header (e.g bytes=0-1000). This is an optional field, if not specified the entire content of the immutable data is streamed to the client.</td>
+</tr>
+</tbody>
+</table>
+<h5 id="Example:">Example:<a class="anchor-link" href="#Example:">&#182;</a></h5>
+<pre><code>Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6Im5RT1poRFJ2VUFLRlVZMzNiRTlnQ25VbVVJSkV0Q2lmYk4zYjE1dXZ2TlU9In0.OTKcHQ9VUKYzBXH_MqeWR4UcHFJV-xlllR68UM9l0b4</code></pre>
+<h3 id="Response:">Response:<a class="anchor-link" href="#Response:">&#182;</a></h3><p>On success, if a Range header was specified in the request, then the HTTP status code in the response header is 206 (Partial Content). Otherwise, it's 200 (OK).</p>
+<h4 id="Headers:">Headers:<a class="anchor-link" href="#Headers:">&#182;</a></h4><table>
+<thead><tr>
+<th>Property</th>
+<th style="text-align:center">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Content-Range</td>
+<td style="text-align:center">Range being streamed / total size.</td>
+</tr>
+<tr>
+<td>Content-Length</td>
+<td style="text-align:center">Original (pre-encryption) size of the immutable data.</td>
+</tr>
+</tbody>
+</table>
+<h5 id="Example:">Example:<a class="anchor-link" href="#Example:">&#182;</a></h5>
+<pre><code>Content-Range: bytes 0-25607/25607
+Content-Length: 25607</code></pre>
+<h4 id="Body:">Body:<a class="anchor-link" href="#Body:">&#182;</a></h4>
+<pre><code>The binary data of the immutable data.</code></pre>
 
 </div>
 </div>
