@@ -11832,6 +11832,7 @@ div#notebook {
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">+</span> <span class="n">location</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">_get_url</span> <span class="o">=</span> <span class="n">_get_url</span>
+<span class="k">del</span><span class="p">(</span><span class="n">_get_url</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11913,6 +11914,7 @@ Content-Length: 25607</code></pre>
     <span class="k">return</span> <span class="n">r</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">_get</span> <span class="o">=</span> <span class="n">_get</span>
+<span class="k">del</span><span class="p">(</span><span class="n">_get</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11929,6 +11931,7 @@ Content-Length: 25607</code></pre>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="s1">&#39;POST&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">_post</span> <span class="o">=</span> <span class="n">_post</span>
+<span class="k">del</span><span class="p">(</span><span class="n">_post</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11956,6 +11959,7 @@ Content-Length: 25607</code></pre>
     <span class="k">return</span> <span class="n">r</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">_request</span> <span class="o">=</span> <span class="n">_request</span>
+<span class="k">del</span><span class="p">(</span><span class="n">_request</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11983,6 +11987,7 @@ Content-Length: 25607</code></pre>
     <span class="k">return</span> <span class="n">r</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">_post_file</span> <span class="o">=</span> <span class="n">_post_file</span>
+<span class="k">del</span><span class="p">(</span><span class="n">_post_file</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12020,6 +12025,7 @@ Content-Length: 25607</code></pre>
         <span class="k">return</span> <span class="kc">False</span>
     
 <span class="n">Safe</span><span class="o">.</span><span class="n">authenticate</span> <span class="o">=</span> <span class="n">authenticate</span>
+<span class="k">del</span><span class="p">(</span><span class="n">authenticate</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12048,6 +12054,7 @@ Content-Length: 25607</code></pre>
         <span class="k">return</span> <span class="kc">False</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">_get_saved_token</span> <span class="o">=</span> <span class="n">_get_saved_token</span>
+<span class="k">del</span><span class="p">(</span><span class="n">_get_saved_token</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12076,6 +12083,7 @@ Content-Length: 25607</code></pre>
         <span class="k">pass</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">_save_token</span> <span class="o">=</span> <span class="n">_save_token</span>
+<span class="k">del</span><span class="p">(</span><span class="n">_save_token</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12099,6 +12107,7 @@ Content-Length: 25607</code></pre>
     <span class="k">return</span> <span class="n">m</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">_get_app_hash</span> <span class="o">=</span> <span class="n">_get_app_hash</span>
+<span class="k">del</span><span class="p">(</span><span class="n">_get_app_hash</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12124,6 +12133,7 @@ Content-Length: 25607</code></pre>
         <span class="k">return</span> <span class="kc">False</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">is_authenticated</span> <span class="o">=</span> <span class="n">is_authenticated</span>
+<span class="k">del</span><span class="p">(</span><span class="n">is_authenticated</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12136,7 +12146,7 @@ Content-Length: 25607</code></pre>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rootPath</span><span class="p">,</span> <span class="n">dirPath</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">mkdirSafe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rootPath</span><span class="p">,</span> <span class="n">dirPath</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;metadata&#39;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">,</span>
     <span class="p">}</span>
@@ -12147,7 +12157,8 @@ Content-Length: 25607</code></pre>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">SafeException</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
-<span class="n">Safe</span><span class="o">.</span><span class="n">mkdir</span> <span class="o">=</span> <span class="n">mkdir</span>
+<span class="n">Safe</span><span class="o">.</span><span class="n">mkdir</span> <span class="o">=</span> <span class="n">mkdirSafe</span>
+<span class="k">del</span><span class="p">(</span><span class="n">mkdirSafe</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12171,6 +12182,7 @@ Content-Length: 25607</code></pre>
         <span class="k">return</span> <span class="kc">None</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">get_dir</span> <span class="o">=</span> <span class="n">get_dir</span>
+<span class="k">del</span><span class="p">(</span><span class="n">get_dir</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12196,6 +12208,7 @@ Content-Length: 25607</code></pre>
         <span class="k">raise</span> <span class="n">SafeException</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">update_dir</span> <span class="o">=</span> <span class="n">update_dir</span>
+<span class="k">del</span><span class="p">(</span><span class="n">update_dir</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12225,6 +12238,7 @@ Content-Length: 25607</code></pre>
         <span class="k">raise</span> <span class="n">SafeException</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">move_dir</span> <span class="o">=</span> <span class="n">move_dir</span>
+<span class="k">del</span><span class="p">(</span><span class="n">move_dir</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12246,6 +12260,7 @@ Content-Length: 25607</code></pre>
         <span class="k">raise</span> <span class="n">SafeException</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">delete_dir</span> <span class="o">=</span> <span class="n">delete_dir</span>
+<span class="k">del</span><span class="p">(</span><span class="n">delete_dir</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12273,6 +12288,7 @@ Content-Length: 25607</code></pre>
         <span class="k">raise</span> <span class="n">SafeException</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">create_file</span> <span class="o">=</span> <span class="n">create_file</span>
+<span class="k">del</span><span class="p">(</span><span class="n">create_file</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12296,6 +12312,7 @@ Content-Length: 25607</code></pre>
         <span class="k">return</span> <span class="kc">None</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">read_file</span> <span class="o">=</span> <span class="n">read_file</span>
+<span class="k">del</span><span class="p">(</span><span class="n">read_file</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12317,6 +12334,7 @@ Content-Length: 25607</code></pre>
         <span class="k">raise</span> <span class="n">SafeException</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">delete_file</span> <span class="o">=</span> <span class="n">delete_file</span>
+<span class="k">del</span><span class="p">(</span><span class="n">delete_file</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12338,6 +12356,7 @@ Content-Length: 25607</code></pre>
         <span class="k">raise</span> <span class="n">SafeException</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">create_long_name</span> <span class="o">=</span> <span class="n">create_long_name</span>
+<span class="k">del</span><span class="p">(</span><span class="n">create_long_name</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12364,6 +12383,7 @@ Content-Length: 25607</code></pre>
         <span class="k">raise</span> <span class="n">SafeException</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">register_dns</span> <span class="o">=</span> <span class="n">register_dns</span>
+<span class="k">del</span><span class="p">(</span><span class="n">register_dns</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12390,6 +12410,7 @@ Content-Length: 25607</code></pre>
         <span class="k">raise</span> <span class="n">SafeException</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
         
 <span class="n">Safe</span><span class="o">.</span><span class="n">add_service</span> <span class="o">=</span> <span class="n">add_service</span>
+<span class="k">del</span><span class="p">(</span><span class="n">add_service</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12411,6 +12432,7 @@ Content-Length: 25607</code></pre>
         <span class="k">raise</span> <span class="n">SafeException</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">get_long_names</span> <span class="o">=</span> <span class="n">get_long_names</span>
+<span class="k">del</span><span class="p">(</span><span class="n">get_long_names</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12434,6 +12456,7 @@ Content-Length: 25607</code></pre>
         <span class="k">return</span> <span class="kc">None</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">get_dns</span> <span class="o">=</span> <span class="n">get_dns</span>
+<span class="k">del</span><span class="p">(</span><span class="n">get_dns</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12455,6 +12478,7 @@ Content-Length: 25607</code></pre>
         <span class="k">raise</span> <span class="n">SafeException</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">get_service_home_directory</span> <span class="o">=</span> <span class="n">get_service_home_directory</span>
+<span class="k">del</span><span class="p">(</span><span class="n">get_service_home_directory</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12476,6 +12500,7 @@ Content-Length: 25607</code></pre>
         <span class="k">raise</span> <span class="n">SafeException</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">delete_service_from_long_name</span> <span class="o">=</span> <span class="n">delete_service_from_long_name</span>
+<span class="k">del</span><span class="p">(</span><span class="n">delete_service_from_long_name</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12497,6 +12522,7 @@ Content-Length: 25607</code></pre>
         <span class="k">raise</span> <span class="n">SafeException</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
 <span class="n">Safe</span><span class="o">.</span><span class="n">delete_long_name</span> <span class="o">=</span> <span class="n">delete_long_name</span>
+<span class="k">del</span><span class="p">(</span><span class="n">delete_long_name</span><span class="p">)</span>
 </pre></div>
 
 </div>
